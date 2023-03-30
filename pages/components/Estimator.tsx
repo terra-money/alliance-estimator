@@ -24,8 +24,12 @@ interface EstimatorCalculatedValues {
   stakingAPR: number;
 }
 
+type EstimatorFieldKey =
+  | keyof EstimatorInputValues
+  | keyof EstimatorCalculatedValues;
+
 interface EstimatorField {
-  name: keyof EstimatorInputValues | keyof EstimatorCalculatedValues;
+  name: EstimatorFieldKey;
   label: string;
   input: boolean;
   group: string;
@@ -50,8 +54,10 @@ export function Estimator() {
     () => values.inflationRate * values.totalTokenSupply,
     [values.inflationRate, values.totalTokenSupply]
   );
+
   // TODO: create use context hook to get pool percentage from all assets.
   const rewardPoolPercentage = 0.9606;
+
   const principalStakeOnTerra = useMemo(
     () => values.totalTokenSupply,
     [values.totalTokenSupply]
@@ -76,11 +82,13 @@ export function Estimator() {
       values.lsdApr,
     ]
   );
+
   // TODO: create use context hook to track total values across assets.
   const poolTotalValue = useMemo(
     () => valueOfDenomInRewardPoolIncludingLSD,
     [valueOfDenomInRewardPoolIncludingLSD]
   );
+
   const percentageMakeupOfRewardPoolValue = useMemo(
     () => valueOfDenomInRewardPoolIncludingLSD / poolTotalValue,
     [poolTotalValue, valueOfDenomInRewardPoolIncludingLSD]
@@ -91,14 +99,17 @@ export function Estimator() {
     () => principalStakeOnTerra,
     [principalStakeOnTerra]
   );
+
   const principalStakeIncludingLSD = useMemo(
     () => values.totalTokenSupply * values.assetPrice,
     [values.totalTokenSupply, values.assetPrice]
   );
+
   const stakingRewardValue = useMemo(
     () => rewardPoolPercentage * poolTotalValue,
     [poolTotalValue]
   );
+
   const stakingAPR = useMemo(
     () =>
       (principalStakeIncludingLSD +
@@ -113,7 +124,7 @@ export function Estimator() {
     ]
   );
 
-  const derivedValues: Partial<EstimatorCalculatedValues> = {
+  const derivedValues: EstimatorCalculatedValues = {
     rewardPoolOnNativeChain,
     rewardPoolPercentage,
     principalStakeOnTerra,
@@ -256,14 +267,27 @@ export function Estimator() {
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const target = event.target;
     const value = parseFloat(target.value);
-    const name = target.name as
-      | keyof EstimatorInputValues
-      | keyof EstimatorCalculatedValues;
-    setValues({
-      ...values,
-      [name]: value,
-    });
+    const name = target.name as keyof EstimatorInputValues;
+
+    if (isInputField(name)) {
+      setValues({
+        ...values,
+        [name]: value,
+      });
+    }
   };
+
+  function isInputField(
+    key: EstimatorFieldKey
+  ): key is keyof EstimatorInputValues {
+    return key in values;
+  }
+
+  function isDerivedField(
+    key: EstimatorFieldKey
+  ): key is keyof EstimatorCalculatedValues {
+    return key in derivedValues;
+  }
 
   // render table for individual token
   return (
@@ -281,8 +305,8 @@ export function Estimator() {
                     name={field.name}
                     value={
                       field.input
-                        ? values[field.name]
-                        : field.name in derivedValues
+                        ? values[field.name as keyof EstimatorInputValues]
+                        : isDerivedField(field.name)
                         ? derivedValues[field.name].toFixed(2)
                         : ""
                     }
