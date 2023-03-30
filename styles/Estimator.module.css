@@ -1,6 +1,7 @@
 
 .container {
   margin: 20px;
+  width: 600px;
 }
 
 .fieldSection {
@@ -13,14 +14,26 @@
 }
 
 .fieldRow {
-  padding: .5rem 0;
+  padding: .5rem;
   display: flex;
+  justify-content: space-between;
+  border-radius: 6px;
 }
 
+/* 
 .fieldLabel {
-  width: 25%
-}
+  
+} 
+*/
 
 .fieldValue {
   padding-left: 2rem;
+}
+
+.fieldValue > input {
+  padding: .5rem
+}
+
+.greybg {
+  background-color: #ddd;
 }

@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { Estimator } from "./components";
+import { Estimator } from "@/components";
 
 export default function Home() {
   return (
