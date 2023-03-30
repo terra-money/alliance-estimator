@@ -1,0 +1,26 @@
+
+.container {
+  margin: 20px;
+}
+
+.fieldSection {
+  width: 100%;
+  padding: .5rem;
+}
+
+.fieldSectionHeader {
+  padding: .5rem 0;
+}
+
+.fieldRow {
+  padding: .5rem 0;
+  display: flex;
+}
+
+.fieldLabel {
+  width: 25%
+}
+
+.fieldValue {
+  padding-left: 2rem;
+}
