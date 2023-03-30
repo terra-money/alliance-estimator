@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import styles from "@/styles/Estimator.module.css";
 
 interface EstimatorInputValues {
@@ -19,7 +19,7 @@ interface EstimatorCalculatedValues {
   percentageMakeupOfRewardPoolValue: number;
   poolTotalValue: number;
   principalStakeExcludingRewards: number;
-  principalStakeIncludingRewards: number;
+  principalStakeIncludingLSD: number;
   stakingRewardValue: number;
   stakingAPR: number;
 }
@@ -28,7 +28,6 @@ interface EstimatorField {
   name: keyof EstimatorInputValues | keyof EstimatorCalculatedValues;
   label: string;
   input: boolean;
-  calculate?: () => number;
   group: string;
 }
 
@@ -45,6 +44,89 @@ export function Estimator() {
     allianceRewardWeight: 1,
     annualizedTakeRate: 0,
   });
+
+  // cache derived values
+  const rewardPoolOnNativeChain = useMemo(
+    () => values.inflationRate * values.totalTokenSupply,
+    [values.inflationRate, values.totalTokenSupply]
+  );
+  // TODO: create use context hook to get pool percentage from all assets.
+  const rewardPoolPercentage = 0.9606;
+  const principalStakeOnTerra = useMemo(
+    () => values.totalTokenSupply,
+    [values.totalTokenSupply]
+  );
+  const rewardPoolMakeup = useMemo(
+    () => values.totalTokenSupply * values.inflationRate,
+    [values.totalTokenSupply, values.inflationRate]
+  );
+  const valueOfDenomInRewardPoolExcludingLSD = useMemo(
+    () => rewardPoolMakeup * values.assetPrice,
+    [rewardPoolMakeup, values.assetPrice]
+  );
+
+  const valueOfDenomInRewardPoolIncludingLSD = useMemo(
+    () =>
+      valueOfDenomInRewardPoolExcludingLSD +
+      rewardPoolMakeup * values.lsdApr * values.assetPrice,
+    [
+      rewardPoolMakeup,
+      valueOfDenomInRewardPoolExcludingLSD,
+      values.assetPrice,
+      values.lsdApr,
+    ]
+  );
+  // TODO: create use context hook to track total values across assets.
+  const poolTotalValue = useMemo(
+    () => valueOfDenomInRewardPoolIncludingLSD,
+    [valueOfDenomInRewardPoolIncludingLSD]
+  );
+  const percentageMakeupOfRewardPoolValue = useMemo(
+    () => valueOfDenomInRewardPoolIncludingLSD / poolTotalValue,
+    [poolTotalValue, valueOfDenomInRewardPoolIncludingLSD]
+  );
+
+  // TODO: this value will be one thing for LUNA but will change for other assets. track for "is luna"
+  const principalStakeExcludingRewards = useMemo(
+    () => principalStakeOnTerra,
+    [principalStakeOnTerra]
+  );
+  const principalStakeIncludingLSD = useMemo(
+    () => values.totalTokenSupply * values.assetPrice,
+    [values.totalTokenSupply, values.assetPrice]
+  );
+  const stakingRewardValue = useMemo(
+    () => rewardPoolPercentage * poolTotalValue,
+    [poolTotalValue]
+  );
+  const stakingAPR = useMemo(
+    () =>
+      (principalStakeIncludingLSD +
+        stakingRewardValue -
+        principalStakeOnTerra * values.assetPrice) /
+      (principalStakeOnTerra * values.assetPrice),
+    [
+      principalStakeIncludingLSD,
+      principalStakeOnTerra,
+      stakingRewardValue,
+      values.assetPrice,
+    ]
+  );
+
+  const derivedValues: Partial<EstimatorCalculatedValues> = {
+    rewardPoolOnNativeChain,
+    rewardPoolPercentage,
+    principalStakeOnTerra,
+    rewardPoolMakeup,
+    valueOfDenomInRewardPoolExcludingLSD,
+    valueOfDenomInRewardPoolIncludingLSD,
+    percentageMakeupOfRewardPoolValue,
+    poolTotalValue,
+    principalStakeExcludingRewards,
+    principalStakeIncludingLSD,
+    stakingRewardValue,
+    stakingAPR,
+  };
 
   // define fields
   const fields: EstimatorField[] = [
@@ -71,7 +153,6 @@ export function Estimator() {
       name: "rewardPoolOnNativeChain",
       label: "Reward Pool on Native Chain",
       input: false,
-      calculate: () => values.inflationRate * values.totalTokenSupply,
     },
     {
       group: "Chain Data",
@@ -90,10 +171,6 @@ export function Estimator() {
       label: "Reward Pool Percentage",
       input: false,
       name: "rewardPoolPercentage",
-      calculate: () => {
-        // TODO create hook to get pool percentage from all assets.
-        return 0.9606;
-      },
     },
     {
       group: "Alliance Asset Parameters",
@@ -106,67 +183,36 @@ export function Estimator() {
       name: "principalStakeOnTerra",
       label: "Principal stake on Terra chain",
       input: false,
-      calculate: () => values.totalTokenSupply,
     },
     {
       group: "Reward Pool",
       name: "rewardPoolMakeup",
       label: "Reward Pool Makeup after 1 year (take rate included)",
       input: false,
-      calculate: () => values.totalTokenSupply * values.inflationRate,
     },
     {
       group: "Reward Pool",
       name: "valueOfDenomInRewardPoolExcludingLSD",
       label: "Value of denom in reward pool (excluding LSD yield)",
       input: false,
-      calculate: () =>
-        values.totalTokenSupply * values.inflationRate * values.assetPrice,
     },
     {
       group: "Reward Pool",
       name: "valueOfDenomInRewardPoolIncludingLSD",
       label: "Value of denom in reward pool after 1 yr LSD yield",
       input: false,
-      calculate: () =>
-        values.totalTokenSupply * values.inflationRate * values.assetPrice +
-        values.totalTokenSupply *
-          values.inflationRate *
-          values.lsdApr *
-          values.assetPrice,
     },
     {
       group: "Reward Pool",
       name: "percentageMakeupOfRewardPoolValue",
       label: "% makeup of reward pool value",
       input: false,
-      calculate: () =>
-        (values.totalTokenSupply * values.inflationRate * values.assetPrice +
-          values.totalTokenSupply *
-            values.inflationRate *
-            values.lsdApr *
-            values.assetPrice) /
-        (values.totalTokenSupply * values.inflationRate * values.assetPrice +
-          values.totalTokenSupply *
-            values.inflationRate *
-            values.lsdApr *
-            values.assetPrice),
     },
     {
       group: "Pool Total Value",
       name: "percentageMakeupOfRewardPoolValue",
       label: "(including LSD appreciation)",
       input: false,
-      calculate: () => {
-        // TODO: create hook to track value of all value with LSD
-        return (
-          values.totalTokenSupply * values.inflationRate * values.assetPrice +
-          values.totalTokenSupply *
-            values.inflationRate *
-            values.lsdApr *
-            values.assetPrice
-        );
-      },
     },
     {
       group: "Principal",
@@ -174,55 +220,25 @@ export function Estimator() {
       label:
         "Principal stake (excluding rewards) amount after 1 year take rate",
       input: false,
-      calculate: () => values.totalTokenSupply,
     },
     {
       group: "Principal",
-      name: "principalStakeIncludingRewards",
+      name: "principalStakeIncludingLSD",
       label:
         "Principal stake value (including LSD yield) after 1 year take rate",
       input: false,
-      calculate: () => values.totalTokenSupply * values.assetPrice,
     },
     {
       group: "Yield",
       name: "stakingRewardValue",
       label: "Staking reward value (including LSD yield)",
       input: false,
-      calculate: () =>
-        0.9606 *
-        (values.totalTokenSupply * values.inflationRate * values.assetPrice +
-          values.totalTokenSupply *
-            values.inflationRate *
-            values.lsdApr *
-            values.assetPrice),
     },
     {
       group: "Yield",
       name: "stakingAPR",
       label: "Staking APR (including LSD appreciation and take rate)",
       input: false,
-      calculate: () => {
-        //=(B26+B29-(B16*B8))/(B16*B8)
-        const principalStakeIncludingRewards =
-          values.totalTokenSupply * values.assetPrice;
-        const stakingRewardValue =
-          0.9606 *
-          (values.totalTokenSupply * values.inflationRate * values.assetPrice +
-            values.totalTokenSupply *
-              values.inflationRate *
-              values.lsdApr *
-              values.assetPrice);
-        const principalStakeOnTerra = values.totalTokenSupply;
-        const assetPrice = values.assetPrice;
-
-        return (
-          (principalStakeIncludingRewards +
-            stakingRewardValue -
-            principalStakeOnTerra * assetPrice) /
-          (principalStakeOnTerra * assetPrice)
-        );
-      },
     },
   ];
 
@@ -264,9 +280,11 @@ export function Estimator() {
                     type="number"
                     name={field.name}
                     value={
-                      field.calculate
-                        ? field.calculate().toFixed(2)
-                        : values[field.name]
+                      field.input
+                        ? values[field.name]
+                        : field.name in derivedValues
+                        ? derivedValues[field.name].toFixed(2)
+                        : ""
                     }
                     onChange={handleInputChange}
                     disabled={!field.input}
