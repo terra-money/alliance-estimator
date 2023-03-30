@@ -1,7 +1,7 @@
 
 .container {
-  margin: 20px;
-  width: 600px;
+  margin: auto;
+  max-width: 800px;
 }
 
 .fieldSection {
