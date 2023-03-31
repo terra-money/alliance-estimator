@@ -3,6 +3,13 @@
   padding: 1rem
 }
 
+.assetHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: .5rem;
+}
+
 .assetName {
   text-decoration: underline;
 }

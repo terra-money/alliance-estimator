@@ -118,7 +118,7 @@ export const nativeFields: NativeField[] = [
   },
   {
     group: "Pool Total Value",
-    name: "percentageMakeupOfRewardPoolValue",
+    name: "poolTotalValue",
     label: "(including LSD appreciation)",
     input: false,
   },

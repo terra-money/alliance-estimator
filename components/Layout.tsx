@@ -1,8 +1,10 @@
 import { NativeAssetColumn, AllianceAssetColumn } from "@/components";
+import { useAppState } from "@/contexts";
 import styles from "@/styles/Layout.module.css";
 
 function Layout() {
-  const allianceAssets = ["WHALELSD", "KUJILSD", "OSMOLSD", "OSMOLSD2"];
+  const { allianceAssets, addAllianceAsset } = useAppState();
+
   return (
     <>
       <header>
@@ -12,13 +14,25 @@ function Layout() {
         <div className={styles.assetColumn}>
           <NativeAssetColumn />
         </div>
-        {allianceAssets.map((asset) => {
+        {allianceAssets.map((asset, i) => {
           return (
-            <div key={`alliance-asset-${asset}`} className={styles.assetColumn}>
-              <AllianceAssetColumn name={asset} />
+            <div
+              key={`alliance-asset-${asset.id}`}
+              className={styles.assetColumn}
+            >
+              <AllianceAssetColumn id={asset.id} label={asset.label} />
             </div>
           );
         })}
+        <div className={styles.addColumn}>
+          <button
+            onClick={() => {
+              addAllianceAsset("New Asset");
+            }}
+          >
+            Add Alliance Asset
+          </button>
+        </div>
       </main>
     </>
   );

@@ -5,13 +5,17 @@ import {
   AllianceCalculatedValues,
   AllianceInputValues,
 } from "@/data";
+import { useAppState } from "@/contexts";
 import styles from "@/styles/AllianceAssetColumn.module.css";
 
-function AllianceAssetColumn({ name }: { name: string }) {
+function AllianceAssetColumn({ id, label }: { id: number; label: string }) {
+  const { removeAllianceAsset, poolTotalValueState, updatePoolTotalValue } =
+    useAppState();
+
   const [values, setValues] = useState<AllianceInputValues>({
     inflationRate: 0.07,
     lsdApr: 0,
-    totalTokenSupply: 1073271122,
+    totalTokenSupply: 100,
     assetPrice: 1.3,
     allianceRewardWeight: 1,
     annualizedTakeRate: 0,
@@ -51,15 +55,9 @@ function AllianceAssetColumn({ name }: { name: string }) {
     ]
   );
 
-  // TODO: create use context hook to track total values across assets.
-  const poolTotalValue = useMemo(
-    () => valueOfDenomInRewardPoolIncludingLSD,
-    [valueOfDenomInRewardPoolIncludingLSD]
-  );
-
   const percentageMakeupOfRewardPoolValue = useMemo(
-    () => valueOfDenomInRewardPoolIncludingLSD / poolTotalValue,
-    [poolTotalValue, valueOfDenomInRewardPoolIncludingLSD]
+    () => valueOfDenomInRewardPoolIncludingLSD / poolTotalValueState,
+    [poolTotalValueState, valueOfDenomInRewardPoolIncludingLSD]
   );
 
   // TODO: this value will be one thing for LUNA but will change for other assets. track for "is luna"
@@ -74,8 +72,8 @@ function AllianceAssetColumn({ name }: { name: string }) {
   );
 
   const stakingRewardValue = useMemo(
-    () => rewardPoolPercentage * poolTotalValue,
-    [poolTotalValue]
+    () => rewardPoolPercentage * poolTotalValueState,
+    [poolTotalValueState]
   );
 
   const stakingAPR = useMemo(
@@ -101,7 +99,6 @@ function AllianceAssetColumn({ name }: { name: string }) {
     valueOfDenomInRewardPoolExcludingLSD,
     valueOfDenomInRewardPoolIncludingLSD,
     percentageMakeupOfRewardPoolValue,
-    poolTotalValue,
     principalStakeExcludingRewards,
     principalStakeIncludingLSD,
     stakingRewardValue,
@@ -120,7 +117,13 @@ function AllianceAssetColumn({ name }: { name: string }) {
         [name]: value,
       });
     }
+
+    updatePoolTotalValue(id.toString(), valueOfDenomInRewardPoolIncludingLSD);
   };
+
+  function handleRemoveAsset() {
+    removeAllianceAsset(id);
+  }
 
   // helper functions to test for type
   function isInputField(
@@ -138,7 +141,14 @@ function AllianceAssetColumn({ name }: { name: string }) {
   // render table for individual token
   return (
     <div className={styles.container}>
-      <h2 className={styles.assetName}>{name}</h2>
+      <div className={styles.assetHeader}>
+        <h2 className={styles.assetName}>
+          {id} - {label}
+        </h2>
+        <div className={styles.removeButton}>
+          <button onClick={handleRemoveAsset}>Remove Asset</button>
+        </div>
+      </div>
       {Object.keys(allianceFieldMap).map((section) => {
         return (
           <div key={`section-${section}`} className={styles.fieldSection}>

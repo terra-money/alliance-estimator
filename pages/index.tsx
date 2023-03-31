@@ -1,4 +1,5 @@
 import Head from "next/head";
+import { InitAppState } from "@/contexts";
 import { Layout } from "@/components";
 
 export default function Home() {
@@ -11,7 +12,9 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <Layout />
+        <InitAppState>
+          <Layout />
+        </InitAppState>
       </main>
     </>
   );
