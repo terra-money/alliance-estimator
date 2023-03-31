@@ -1,0 +1,10 @@
+.columnContainer {
+  display: flex;
+  overflow-x: scroll;
+}
+
+.assetColumn {
+  margin: 1rem 0 0 1rem;
+  max-width: 375px;
+  border: 1px solid black;
+}

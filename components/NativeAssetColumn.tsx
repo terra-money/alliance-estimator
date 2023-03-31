@@ -1,14 +1,14 @@
 import { useState, useMemo } from "react";
 import {
-  fieldMap,
-  EstimatorFieldKey,
-  EstimatorCalculatedValues,
-  EstimatorInputValues,
+  nativeFieldMap,
+  NativeFieldKey,
+  NativeCalculatedValues,
+  NativeInputValues,
 } from "@/data";
-import styles from "@/styles/Estimator.module.css";
+import styles from "@/styles/NativeAssetColumn.module.css";
 
-export function Estimator() {
-  const [values, setValues] = useState<EstimatorInputValues>({
+function NativeAssetColumn() {
+  const [values, setValues] = useState<NativeInputValues>({
     inflationRate: 0.07,
     lsdApr: 0,
     totalTokenSupply: 1073271122,
@@ -93,7 +93,7 @@ export function Estimator() {
   );
 
   // create map to lookup derived values later
-  const derivedValues: EstimatorCalculatedValues = {
+  const derivedValues: NativeCalculatedValues = {
     rewardPoolOnNativeChain,
     rewardPoolPercentage,
     principalStakeOnTerra,
@@ -112,7 +112,7 @@ export function Estimator() {
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const target = event.target;
     const value = parseFloat(target.value);
-    const name = target.name as keyof EstimatorInputValues;
+    const name = target.name as keyof NativeInputValues;
 
     if (isInputField(name)) {
       setValues({
@@ -123,26 +123,25 @@ export function Estimator() {
   };
 
   // helper functions to test for type
-  function isInputField(
-    key: EstimatorFieldKey
-  ): key is keyof EstimatorInputValues {
+  function isInputField(key: NativeFieldKey): key is keyof NativeInputValues {
     return key in values;
   }
 
   function isDerivedField(
-    key: EstimatorFieldKey
-  ): key is keyof EstimatorCalculatedValues {
+    key: NativeFieldKey
+  ): key is keyof NativeCalculatedValues {
     return key in derivedValues;
   }
 
   // render table for individual token
   return (
     <div className={styles.container}>
-      {Object.keys(fieldMap).map((section) => {
+      <h2 className={styles.assetName}>LUNA</h2>
+      {Object.keys(nativeFieldMap).map((section) => {
         return (
           <div key={`section-${section}`} className={styles.fieldSection}>
             <h3 className={styles.fieldSectionHeader}>{section}</h3>
-            {fieldMap[section].map((field, i) => (
+            {nativeFieldMap[section].map((field, i) => (
               <div
                 className={`${styles.fieldRow} ${!(i % 2) && styles.greybg}`}
                 key={field.name}
@@ -154,7 +153,7 @@ export function Estimator() {
                     name={field.name}
                     value={
                       field.input
-                        ? values[field.name as keyof EstimatorInputValues]
+                        ? values[field.name as keyof NativeInputValues]
                         : isDerivedField(field.name)
                         ? derivedValues[field.name].toFixed(2)
                         : ""
@@ -172,4 +171,4 @@ export function Estimator() {
   );
 }
 
-export default Estimator;
+export default NativeAssetColumn;

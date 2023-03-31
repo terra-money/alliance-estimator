@@ -1,7 +1,10 @@
 
 .container {
-  margin: auto;
-  max-width: 800px;
+  padding: 1rem
+}
+
+.assetName {
+  text-decoration: underline;
 }
 
 .fieldSection {

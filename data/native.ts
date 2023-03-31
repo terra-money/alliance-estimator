@@ -1,4 +1,4 @@
-export interface EstimatorInputValues {
+export interface NativeInputValues {
   inflationRate: number;
   lsdApr: number;
   totalTokenSupply: number;
@@ -7,7 +7,7 @@ export interface EstimatorInputValues {
   annualizedTakeRate: number;
 }
 
-export interface EstimatorCalculatedValues {
+export interface NativeCalculatedValues {
   rewardPoolOnNativeChain: number;
   rewardPoolPercentage: number;
   principalStakeOnTerra: number;
@@ -22,23 +22,22 @@ export interface EstimatorCalculatedValues {
   stakingAPR: number;
 }
 
-export type EstimatorFieldKey =
-  | keyof EstimatorInputValues
-  | keyof EstimatorCalculatedValues;
+export type NativeFieldKey =
+  | keyof NativeInputValues
+  | keyof NativeCalculatedValues;
 
-export interface EstimatorField {
-  name: EstimatorFieldKey;
+export interface NativeField {
+  name: NativeFieldKey;
   label: string;
   input: boolean;
   group: string;
 }
 
-export type FieldMap = {
-  [key: string]: EstimatorField[];
+export type NativeFieldMap = {
+  [key: string]: NativeField[];
 };
 
-// define fields
-export const fields: EstimatorField[] = [
+export const nativeFields: NativeField[] = [
   {
     group: "Chain Data",
     name: "inflationRate",
@@ -150,11 +149,11 @@ export const fields: EstimatorField[] = [
 ];
 
 // convert the fields to a map keyed by group for rendering
-export const fieldMap: FieldMap = {};
+export const nativeFieldMap: NativeFieldMap = {};
 
-fields.forEach((field) => {
-  if (!fieldMap[field.group]) {
-    fieldMap[field.group] = [];
+nativeFields.forEach((field) => {
+  if (!nativeFieldMap[field.group]) {
+    nativeFieldMap[field.group] = [];
   }
-  fieldMap[field.group].push(field);
+  nativeFieldMap[field.group].push(field);
 });

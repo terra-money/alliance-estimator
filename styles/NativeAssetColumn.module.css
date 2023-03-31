@@ -1,0 +1,42 @@
+
+.container {
+  padding: 1rem
+}
+
+.assetName {
+  text-decoration: underline;
+}
+
+.fieldSection {
+  width: 100%;
+  padding: .5rem;
+}
+
+.fieldSectionHeader {
+  padding: .5rem 0;
+}
+
+.fieldRow {
+  padding: .5rem;
+  display: flex;
+  justify-content: space-between;
+  border-radius: 6px;
+}
+
+/* 
+.fieldLabel {
+  
+} 
+*/
+
+.fieldValue {
+  padding-left: 2rem;
+}
+
+.fieldValue > input {
+  padding: .5rem
+}
+
+.greybg {
+  background-color: #ddd;
+}
