@@ -35,6 +35,10 @@ const Card = ({
     return key in derivedValues;
   }
 
+  function isInputField(key: FieldKeys): key is keyof InputValues {
+    return key in userInputValues;
+  }
+
   return (
     <div className={cardStyles.fieldSection}>
       <div className={cardStyles.fieldSectionHeader}>
@@ -52,14 +56,10 @@ const Card = ({
             <div className={cardStyles.fieldValue}>
               {field.input ? (
                 <input
-                  type="number"
+                  type="text"
                   name={field.name}
                   value={
-                    field.input
-                      ? userInputValues[field.name as keyof InputValues]
-                      : isDerivedField(field.name)
-                      ? derivedValues[field.name].toFixed(2)
-                      : ""
+                    isInputField(field.name) ? userInputValues[field.name] : ""
                   }
                   onChange={handleInputChange}
                   disabled={!field.input}
