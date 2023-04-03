@@ -10,28 +10,36 @@ import {
 } from "@/data";
 import cardStyles from "../styles/Card.module.scss";
 
+type InputValues = AllianceInputValues | NativeInputValues;
+type CalculatedValues = AllianceCalculatedValues | NativeCalculatedValues;
+type FieldKeys = AllianceFieldKey | NativeFieldKey;
+
 const Card = ({
   section,
   type,
-  values,
+  userInputValues,
   handleInputChange,
-  isDerivedField,
   derivedValues,
+  index,
 }: {
   section: string;
   type: string;
-  values: AllianceInputValues;
+  userInputValues: InputValues;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  isDerivedField: (
-    key: AllianceFieldKey
-  ) => key is keyof AllianceCalculatedValues;
-  derivedValues: AllianceCalculatedValues;
+  derivedValues: CalculatedValues;
+  index: number;
 }) => {
   const fields = type === "native" ? nativeFieldMap : allianceFieldMap;
 
+  function isDerivedField(key: FieldKeys): key is keyof CalculatedValues {
+    return key in derivedValues;
+  }
+
   return (
     <div className={cardStyles.fieldSection}>
-      <h3 className={cardStyles.fieldSectionHeader}>{section}</h3>
+      <div className={cardStyles.fieldSectionHeader}>
+        <h3 className={cardStyles.fieldSectionTitle}>{section}</h3>
+      </div>
       <div className={cardStyles.inputs}>
         {fields[section].map((field, i) => (
           <div className={`${cardStyles.fieldRow}`} key={field.name}>
@@ -48,7 +56,7 @@ const Card = ({
                   name={field.name}
                   value={
                     field.input
-                      ? values[field.name as keyof NativeInputValues]
+                      ? userInputValues[field.name as keyof InputValues]
                       : isDerivedField(field.name)
                       ? derivedValues[field.name].toFixed(2)
                       : ""

@@ -7,12 +7,12 @@ import {
 } from "@/data";
 import { useAppState } from "@/contexts";
 import styles from "@/styles/NativeAssetColumn.module.css";
-import Card from './Card';
+import Card from "./Card";
 
 function NativeAssetColumn() {
   const { poolTotalValueState, updatePoolTotalValue } = useAppState();
 
-  const [values, setValues] = useState<NativeInputValues>({
+  const [userInputValues, setUserInputValues] = useState<NativeInputValues>({
     inflationRate: 0.07,
     lsdApr: 0,
     totalTokenSupply: 1073271122,
@@ -24,35 +24,35 @@ function NativeAssetColumn() {
 
   // cache derived values
   const rewardPoolOnNativeChain = useMemo(
-    () => values.inflationRate * values.totalTokenSupply,
-    [values.inflationRate, values.totalTokenSupply]
+    () => userInputValues.inflationRate * userInputValues.totalTokenSupply,
+    [userInputValues.inflationRate, userInputValues.totalTokenSupply]
   );
 
   // TODO: create use context hook to get pool percentage from all assets.
   const rewardPoolPercentage = 0.9606;
 
   const principalStakeOnTerra = useMemo(
-    () => values.totalTokenSupply,
-    [values.totalTokenSupply]
+    () => userInputValues.totalTokenSupply,
+    [userInputValues.totalTokenSupply]
   );
   const rewardPoolMakeup = useMemo(
-    () => values.totalTokenSupply * values.inflationRate,
-    [values.totalTokenSupply, values.inflationRate]
+    () => userInputValues.totalTokenSupply * userInputValues.inflationRate,
+    [userInputValues.totalTokenSupply, userInputValues.inflationRate]
   );
   const valueOfDenomInRewardPoolExcludingLSD = useMemo(
-    () => rewardPoolMakeup * values.assetPrice,
-    [rewardPoolMakeup, values.assetPrice]
+    () => rewardPoolMakeup * userInputValues.assetPrice,
+    [rewardPoolMakeup, userInputValues.assetPrice]
   );
 
   const valueOfDenomInRewardPoolIncludingLSD = useMemo(
     () =>
       valueOfDenomInRewardPoolExcludingLSD +
-      rewardPoolMakeup * values.lsdApr * values.assetPrice,
+      rewardPoolMakeup * userInputValues.lsdApr * userInputValues.assetPrice,
     [
       rewardPoolMakeup,
       valueOfDenomInRewardPoolExcludingLSD,
-      values.assetPrice,
-      values.lsdApr,
+      userInputValues.assetPrice,
+      userInputValues.lsdApr,
     ]
   );
 
@@ -73,8 +73,8 @@ function NativeAssetColumn() {
   );
 
   const principalStakeIncludingLSD = useMemo(
-    () => values.totalTokenSupply * values.assetPrice,
-    [values.totalTokenSupply, values.assetPrice]
+    () => userInputValues.totalTokenSupply * userInputValues.assetPrice,
+    [userInputValues.totalTokenSupply, userInputValues.assetPrice]
   );
 
   const stakingRewardValue = useMemo(
@@ -86,13 +86,13 @@ function NativeAssetColumn() {
     () =>
       (principalStakeIncludingLSD +
         stakingRewardValue -
-        principalStakeOnTerra * values.assetPrice) /
-      (principalStakeOnTerra * values.assetPrice),
+        principalStakeOnTerra * userInputValues.assetPrice) /
+      (principalStakeOnTerra * userInputValues.assetPrice),
     [
       principalStakeIncludingLSD,
       principalStakeOnTerra,
       stakingRewardValue,
-      values.assetPrice,
+      userInputValues.assetPrice,
     ]
   );
 
@@ -119,8 +119,8 @@ function NativeAssetColumn() {
     const name = target.name as keyof NativeInputValues;
 
     if (isInputField(name)) {
-      setValues({
-        ...values,
+      setUserInputValues({
+        ...userInputValues,
         [name]: value,
       });
     }
@@ -129,28 +129,22 @@ function NativeAssetColumn() {
 
   // helper functions to test for type
   function isInputField(key: NativeFieldKey): key is keyof NativeInputValues {
-    return key in values;
-  }
-
-  function isDerivedField(
-    key: NativeFieldKey
-  ): key is keyof NativeCalculatedValues {
-    return key in derivedValues;
+    return key in userInputValues;
   }
 
   // render table for individual token
   return (
     <div className={styles.container}>
       <h2 className={styles.assetName}>LUNA</h2>
-      {Object.keys(nativeFieldMap).map((section) => {
+      {Object.keys(nativeFieldMap).map((section, i) => {
         return (
           <Card
             key={`section-${section}`}
+            index={i}
             type="native"
             section={section}
-            values={values}
+            userInputValues={userInputValues}
             handleInputChange={handleInputChange}
-            isDerivedField={isDerivedField}
             derivedValues={derivedValues}
           />
         );

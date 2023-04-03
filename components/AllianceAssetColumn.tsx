@@ -7,13 +7,13 @@ import {
 } from "@/data";
 import { useAppState } from "@/contexts";
 import styles from "@/styles/AllianceAssetColumn.module.css";
-import Card from './Card';
+import Card from "./Card";
 
 function AllianceAssetColumn({ id, label }: { id: number; label: string }) {
   const { removeAllianceAsset, poolTotalValueState, updatePoolTotalValue } =
     useAppState();
 
-  const [values, setValues] = useState<AllianceInputValues>({
+  const [userInputValues, setUserInputValues] = useState<AllianceInputValues>({
     inflationRate: 0.07,
     lsdApr: 0,
     totalTokenSupply: 100,
@@ -25,38 +25,38 @@ function AllianceAssetColumn({ id, label }: { id: number; label: string }) {
 
   // cache derived values
   const rewardPoolOnAllianceChain = useMemo(
-    () => values.inflationRate * values.totalTokenSupply,
-    [values.inflationRate, values.totalTokenSupply]
+    () => userInputValues.inflationRate * userInputValues.totalTokenSupply,
+    [userInputValues.inflationRate, userInputValues.totalTokenSupply]
   );
 
   // TODO: create use context hook to get pool percentage from all assets.
   const rewardPoolPercentage = 0.9606;
 
   const takeRateInterval = 5;
-  const takeRate = 0.0000174331 // Some crazy complicated formula
+  const takeRate = 0.0000174331; // Some crazy complicated formula
 
   const principalStakeOnNativeChain = useMemo(
-    () => values.totalTokenSupply,
-    [values.totalTokenSupply]
+    () => userInputValues.totalTokenSupply,
+    [userInputValues.totalTokenSupply]
   );
   const rewardPoolMakeup = useMemo(
-    () => values.totalTokenSupply * values.inflationRate,
-    [values.totalTokenSupply, values.inflationRate]
+    () => userInputValues.totalTokenSupply * userInputValues.inflationRate,
+    [userInputValues.totalTokenSupply, userInputValues.inflationRate]
   );
   const valueOfDenomInRewardPoolExcludingLSD = useMemo(
-    () => rewardPoolMakeup * values.assetPrice,
-    [rewardPoolMakeup, values.assetPrice]
+    () => rewardPoolMakeup * userInputValues.assetPrice,
+    [rewardPoolMakeup, userInputValues.assetPrice]
   );
 
   const valueOfDenomInRewardPoolIncludingLSD = useMemo(
     () =>
       valueOfDenomInRewardPoolExcludingLSD +
-      rewardPoolMakeup * values.lsdApr * values.assetPrice,
+      rewardPoolMakeup * userInputValues.lsdApr * userInputValues.assetPrice,
     [
       rewardPoolMakeup,
       valueOfDenomInRewardPoolExcludingLSD,
-      values.assetPrice,
-      values.lsdApr,
+      userInputValues.assetPrice,
+      userInputValues.lsdApr,
     ]
   );
 
@@ -72,8 +72,8 @@ function AllianceAssetColumn({ id, label }: { id: number; label: string }) {
   );
 
   const principalStakeIncludingLSD = useMemo(
-    () => values.totalTokenSupply * values.assetPrice,
-    [values.totalTokenSupply, values.assetPrice]
+    () => userInputValues.totalTokenSupply * userInputValues.assetPrice,
+    [userInputValues.totalTokenSupply, userInputValues.assetPrice]
   );
 
   const stakingRewardValue = useMemo(
@@ -85,13 +85,13 @@ function AllianceAssetColumn({ id, label }: { id: number; label: string }) {
     () =>
       (principalStakeIncludingLSD +
         stakingRewardValue -
-        principalStakeOnNativeChain * values.assetPrice) /
-      (principalStakeOnNativeChain * values.assetPrice),
+        principalStakeOnNativeChain * userInputValues.assetPrice) /
+      (principalStakeOnNativeChain * userInputValues.assetPrice),
     [
       principalStakeIncludingLSD,
       principalStakeOnNativeChain,
       stakingRewardValue,
-      values.assetPrice,
+      userInputValues.assetPrice,
     ]
   );
 
@@ -119,8 +119,8 @@ function AllianceAssetColumn({ id, label }: { id: number; label: string }) {
     const name = target.name as keyof AllianceInputValues;
 
     if (isInputField(name)) {
-      setValues({
-        ...values,
+      setUserInputValues({
+        ...userInputValues,
         [name]: value,
       });
     }
@@ -136,13 +136,7 @@ function AllianceAssetColumn({ id, label }: { id: number; label: string }) {
   function isInputField(
     key: AllianceFieldKey
   ): key is keyof AllianceInputValues {
-    return key in values;
-  }
-
-  function isDerivedField(
-    key: AllianceFieldKey
-  ): key is keyof AllianceCalculatedValues {
-    return key in derivedValues;
+    return key in userInputValues;
   }
 
   // render table for individual token
@@ -156,15 +150,15 @@ function AllianceAssetColumn({ id, label }: { id: number; label: string }) {
           <button onClick={handleRemoveAsset}>Remove Asset</button>
         </div>
       </div>
-      {Object.keys(allianceFieldMap).map((section) => {
+      {Object.keys(allianceFieldMap).map((section, i) => {
         return (
           <Card
             key={`section-${section}`}
+            index={i}
             type="alliance"
             section={section}
-            values={values}
+            userInputValues={userInputValues}
             handleInputChange={handleInputChange}
-            isDerivedField={isDerivedField}
             derivedValues={derivedValues}
           />
         );
