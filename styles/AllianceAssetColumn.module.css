@@ -1,6 +1,9 @@
 
 .container {
-  padding: 1rem
+  /* padding: 1rem */
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .assetName {
@@ -23,10 +26,10 @@
   border-radius: 6px;
 }
 
-/* 
+/*
 .fieldLabel {
-  
-} 
+
+}
 */
 
 .fieldValue {
