@@ -5,12 +5,13 @@ export interface AllianceInputValues {
   assetPrice: number;
   allianceRewardWeight: number;
   annualizedTakeRate: number;
+  denom: string;
 }
 
 export interface AllianceCalculatedValues {
   rewardPoolOnAllianceChain: number;
   rewardPoolPercentage: number;
-  principalStakeOnTerra: number;
+  principalStakeOnNativeChain: number;
   rewardPoolMakeup: number;
   valueOfDenomInRewardPoolExcludingLSD: number;
   valueOfDenomInRewardPoolIncludingLSD: number;
@@ -20,6 +21,8 @@ export interface AllianceCalculatedValues {
   principalStakeIncludingLSD: number;
   stakingRewardValue: number;
   stakingAPR: number;
+  takeRateInterval: number;
+  takeRate: number;
 }
 
 export type AllianceFieldKey =
@@ -29,8 +32,10 @@ export type AllianceFieldKey =
 export interface AllianceField {
   name: AllianceFieldKey;
   label: string;
+  secondaryLabel?: string;
   input: boolean;
   group: string;
+  advanced?: boolean;
 }
 
 export type AllianceFieldMap = {
@@ -40,27 +45,10 @@ export type AllianceFieldMap = {
 export const allianceFields: AllianceField[] = [
   {
     group: "Chain Data",
-    name: "inflationRate",
-    label: "Inflation Rate",
-    input: true,
-  },
-  {
-    group: "Chain Data",
     name: "lsdApr",
-    label: "LSD APR (set to 0 if not an LSD)",
+    label: "Annual Estimated LSD Growth Rate",
+    secondaryLabel: "Set to 0 if not an LSD",
     input: true,
-  },
-  {
-    group: "Chain Data",
-    name: "totalTokenSupply",
-    label: "Total Token Supply",
-    input: true,
-  },
-  {
-    group: "Chain Data",
-    name: "rewardPoolOnAllianceChain",
-    label: "Reward Pool on Alliance Chain",
-    input: false,
   },
   {
     group: "Chain Data",
@@ -87,34 +75,54 @@ export const allianceFields: AllianceField[] = [
     name: "annualizedTakeRate",
   },
   {
-    group: "Reward Pool",
-    name: "principalStakeOnTerra",
-    label: "Principal stake on Terra chain",
+    group: "Alliance Asset Parameters",
+    label: "Take Rate Interval",
+    secondaryLabel: "Minutes",
     input: false,
+    name: "takeRateInterval",
+  },
+  {
+    group: "Alliance Asset Parameters",
+    label: "Take Rate",
+    secondaryLabel: "Module Parameter",
+    input: false,
+    name: "takeRate",
+  },
+  {
+    group: "Reward Pool",
+    name: "principalStakeOnNativeChain",
+    label: "Principal stake on Native chain",
+    input: true,
   },
   {
     group: "Reward Pool",
     name: "rewardPoolMakeup",
-    label: "Reward Pool Makeup after 1 year (take rate included)",
+    label: "Reward Pool Makeup after 1 year",
+    secondaryLabel: "Take rate included",
     input: false,
+    advanced: true,
   },
   {
     group: "Reward Pool",
     name: "valueOfDenomInRewardPoolExcludingLSD",
-    label: "Value of denom in reward pool (excluding LSD yield)",
+    label: "Value of denom in reward pool",
+    secondaryLabel: "Excluding LSD yield",
     input: false,
+    advanced: true,
   },
   {
     group: "Reward Pool",
     name: "valueOfDenomInRewardPoolIncludingLSD",
     label: "Value of denom in reward pool after 1 yr LSD yield",
     input: false,
+    advanced: true,
   },
   {
     group: "Reward Pool",
     name: "percentageMakeupOfRewardPoolValue",
     label: "% makeup of reward pool value",
     input: false,
+    advanced: true,
   },
   {
     group: "Pool Total Value",
@@ -125,25 +133,31 @@ export const allianceFields: AllianceField[] = [
   {
     group: "Principal",
     name: "principalStakeExcludingRewards",
-    label: "Principal stake (excluding rewards) amount after 1 year take rate",
+    label: "Principal stake amount - 1 year take rate",
+    secondaryLabel: "Excluding rewards",
     input: false,
+    advanced: true,
   },
   {
     group: "Principal",
     name: "principalStakeIncludingLSD",
-    label: "Principal stake value (including LSD yield) after 1 year take rate",
+    label: "Principal stake value - 1 year take rate",
+    secondaryLabel: "Including LSD yield",
     input: false,
+    advanced: true,
   },
   {
     group: "Yield",
     name: "stakingRewardValue",
-    label: "Staking reward value (including LSD yield)",
+    label: "Staking reward value",
+    secondaryLabel: "Including LSD yield",
     input: false,
   },
   {
     group: "Yield",
     name: "stakingAPR",
-    label: "Staking APR (including LSD appreciation and take rate)",
+    label: "Staking APR",
+    secondaryLabel: "Including LSD appreciation and take rate",
     input: false,
   },
 ];

@@ -2,6 +2,7 @@ export interface NativeInputValues {
   inflationRate: number;
   lsdApr: number;
   totalTokenSupply: number;
+  denom: string;
   assetPrice: number;
   allianceRewardWeight: number;
   annualizedTakeRate: number;
@@ -29,8 +30,10 @@ export type NativeFieldKey =
 export interface NativeField {
   name: NativeFieldKey;
   label: string;
+  secondaryLabel?: string;
   input: boolean;
   group: string;
+  advanced?: boolean;
 }
 
 export type NativeFieldMap = {
@@ -47,7 +50,8 @@ export const nativeFields: NativeField[] = [
   {
     group: "Chain Data",
     name: "lsdApr",
-    label: "LSD APR (set to 0 if not an LSD)",
+    label: "Annual Estimated LSD Growth Rate",
+    secondaryLabel: "Set to 0 if not an LSD",
     input: true,
   },
   {
@@ -61,6 +65,12 @@ export const nativeFields: NativeField[] = [
     name: "rewardPoolOnNativeChain",
     label: "Reward Pool on Native Chain",
     input: false,
+  },
+  {
+    group: "Chain Data",
+    name: "denom",
+    label: "Denom",
+    input: true,
   },
   {
     group: "Chain Data",
@@ -80,41 +90,49 @@ export const nativeFields: NativeField[] = [
     input: false,
     name: "rewardPoolPercentage",
   },
-  {
-    group: "Alliance Asset Parameters",
-    label: "Annualized Take Rate (for LSDs)",
-    input: true,
-    name: "annualizedTakeRate",
-  },
+  // {
+  //   group: "Alliance Asset Parameters",
+  //   label: "Annualized Take Rate",
+  //   secondaryLabel: "For LSDs",
+  //   input: true,
+  //   name: "annualizedTakeRate",
+  // },
   {
     group: "Reward Pool",
     name: "principalStakeOnTerra",
-    label: "Principal stake on Terra chain",
-    input: false,
+    label: "Principal stake on Native chain",
+    input: true,
   },
   {
     group: "Reward Pool",
     name: "rewardPoolMakeup",
-    label: "Reward Pool Makeup after 1 year (take rate included)",
+    label: "Reward Pool Makeup after 1 year",
+    secondaryLabel: "Take rate included",
     input: false,
+    advanced: true,
   },
   {
     group: "Reward Pool",
     name: "valueOfDenomInRewardPoolExcludingLSD",
-    label: "Value of denom in reward pool (excluding LSD yield)",
+    label: "Value of denom in reward pool",
+    secondaryLabel: "Excluding LSD yield",
     input: false,
+    advanced: true,
   },
   {
     group: "Reward Pool",
     name: "valueOfDenomInRewardPoolIncludingLSD",
-    label: "Value of denom in reward pool after 1 yr LSD yield",
+    label: "Value of denom in reward pool",
+    secondaryLabel: "After 1 year LSD yield",
     input: false,
+    advanced: true,
   },
   {
     group: "Reward Pool",
     name: "percentageMakeupOfRewardPoolValue",
     label: "% makeup of reward pool value",
     input: false,
+    advanced: true,
   },
   {
     group: "Pool Total Value",
@@ -125,25 +143,31 @@ export const nativeFields: NativeField[] = [
   {
     group: "Principal",
     name: "principalStakeExcludingRewards",
-    label: "Principal stake (excluding rewards) amount after 1 year take rate",
+    label: "Principal stake - after 1 year take rate",
+    secondaryLabel: "Excluding Rewards",
     input: false,
+    advanced: true,
   },
   {
     group: "Principal",
     name: "principalStakeIncludingLSD",
-    label: "Principal stake value (including LSD yield) after 1 year take rate",
+    label: "Principal stake - after 1 year take rate",
+    secondaryLabel: "Including LSD yield",
     input: false,
+    advanced: true,
   },
   {
     group: "Yield",
     name: "stakingRewardValue",
-    label: "Staking reward value (including LSD yield)",
+    label: "Staking reward value",
+    secondaryLabel: "Including LSD yield",
     input: false,
   },
   {
     group: "Yield",
     name: "stakingAPR",
-    label: "Staking APR (including LSD appreciation and take rate)",
+    label: "Staking APR",
+    secondaryLabel: "Including LSD appreciation and take rate",
     input: false,
   },
 ];

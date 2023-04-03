@@ -1,0 +1,76 @@
+.fieldSection {
+  background-color: #1A1A23;
+  border: 1px solid #393939;
+  border-radius: 8px;
+  width: 600px;
+}
+
+.fieldSectionHeader {
+  padding: 16px 20px;
+  background-color: #21212C;
+  border-bottom: 1px solid #393939;
+  border-top-right-radius: 8px;
+  border-top-left-radius: 8px;
+
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 120%;
+  color: #FFFFFF;
+}
+
+.inputs {
+  padding: 12px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.fieldRow {
+  display: flex;
+  justify-content: space-between;
+  border-radius: 6px;
+}
+
+.labelContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.fieldLabel {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 120%;
+  color: #E8E8E8;
+}
+
+.secondaryLabel {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 120%;
+  color: #8A8AA0;
+}
+
+.fieldValue {
+  width: 200px;
+
+  input {
+    padding: 8px 12px;
+    background-color: #1F1F2C;
+    border: 1px solid #393939;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 120%;
+    color: #FFFFFF;
+    font-family: "Gotham";
+    width: inherit;
+  }
+
+  .textValue {
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 120%;
+    color: #FFFFFF;
+    width: inherit;
+  }
+}
