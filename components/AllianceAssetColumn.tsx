@@ -143,9 +143,7 @@ function AllianceAssetColumn({ id, label }: { id: number; label: string }) {
   return (
     <div className={styles.container}>
       <div className={styles.assetHeader}>
-        <h2 className={styles.assetName}>
-          {id} - {label}
-        </h2>
+        <h2 className={styles.assetName}>{label}</h2>
         <div className={styles.removeButton}>
           <button onClick={handleRemoveAsset}>Remove Asset</button>
         </div>

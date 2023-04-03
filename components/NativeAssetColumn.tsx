@@ -133,7 +133,9 @@ function NativeAssetColumn() {
   // render table for individual token
   return (
     <div className={styles.container}>
-      <h2 className={styles.assetName}>LUNA</h2>
+      <div className={styles.assetHeader}>
+        <h2 className={styles.assetName}>LUNA</h2>
+      </div>
       {Object.keys(nativeFieldMap).map((section, i) => {
         return (
           <Card
