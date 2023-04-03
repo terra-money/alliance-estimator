@@ -9,19 +9,12 @@ import { useAppState } from "@/contexts";
 import styles from "@/styles/NativeAssetColumn.module.css";
 import Card from "./Card";
 
-function NativeAssetColumn() {
-  const { poolTotalValueState, updatePoolTotalValue } = useAppState();
-
-  const [userInputValues, setUserInputValues] = useState<NativeInputValues>({
-    inflationRate: 0.07,
-    lsdApr: 0,
-    principalStakeOnNativeChain: 527724946,
-    totalTokenSupply: 1073271122,
-    assetPrice: 1.3,
-    allianceRewardWeight: 1,
-    annualizedTakeRate: 0,
-    denom: "denom",
-  });
+function NativeAssetColumn({
+  userInputValues,
+}: {
+  userInputValues: NativeInputValues;
+}) {
+  const { poolTotalValueState } = useAppState();
 
   // cache derived values
   const rewardPoolOnNativeChain = useMemo(
@@ -63,7 +56,6 @@ function NativeAssetColumn() {
     [poolTotalValue, valueOfDenomInRewardPoolIncludingLSD]
   );
 
-  // TODO: this value will be one thing for LUNA but will change for other assets. track for "is luna"
   const principalStakeExcludingRewards = useMemo(
     () => userInputValues.principalStakeOnNativeChain,
     [userInputValues.principalStakeOnNativeChain]
@@ -95,7 +87,7 @@ function NativeAssetColumn() {
     ]
   );
 
-  // create map to lookup derived values later
+  // map to lookup derived values later
   const derivedValues: NativeCalculatedValues = {
     rewardPoolOnNativeChain,
     rewardPoolPercentage,
@@ -109,26 +101,6 @@ function NativeAssetColumn() {
     stakingRewardValue,
     stakingAPR,
   };
-
-  // input handler, get field value and update state
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const target = event.target;
-    const value = target.value;
-    const name = target.name as keyof NativeInputValues;
-
-    if (isInputField(name)) {
-      setUserInputValues({
-        ...userInputValues,
-        [name]: value,
-      });
-    }
-    updatePoolTotalValue("luna", valueOfDenomInRewardPoolIncludingLSD);
-  };
-
-  // helper functions to test for type
-  function isInputField(key: NativeFieldKey): key is keyof NativeInputValues {
-    return key in userInputValues;
-  }
 
   // render table for individual token
   return (
@@ -144,7 +116,6 @@ function NativeAssetColumn() {
             type="native"
             section={section}
             userInputValues={userInputValues}
-            handleInputChange={handleInputChange}
             derivedValues={derivedValues}
           />
         );

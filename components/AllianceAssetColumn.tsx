@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import {
   allianceFieldMap,
   AllianceFieldKey,
@@ -9,97 +9,75 @@ import { useAppState } from "@/contexts";
 import styles from "@/styles/AllianceAssetColumn.module.css";
 import Card from "./Card";
 
-function AllianceAssetColumn({ id, label }: { id: number; label: string }) {
-  const { removeAllianceAsset, poolTotalValueState, updatePoolTotalValue } =
+function AllianceAssetColumn({
+  id,
+  label,
+  userInputValues,
+}: {
+  id: number;
+  label: string;
+  userInputValues: AllianceInputValues;
+}) {
+  const { removeAllianceAsset, allianceAssets, nativeInputValues } =
     useAppState();
 
-  const [userInputValues, setUserInputValues] = useState<AllianceInputValues>({
-    inflationRate: 0.07,
-    lsdApr: 0,
-    totalTokenSupply: 100,
-    assetPrice: 1.3,
-    allianceRewardWeight: 1,
-    annualizedTakeRate: 0,
-    denom: "",
-  });
-
-  // cache derived values
-  const rewardPoolOnAllianceChain = useMemo(
-    () => userInputValues.inflationRate * userInputValues.totalTokenSupply,
-    [userInputValues.inflationRate, userInputValues.totalTokenSupply]
-  );
-
-  // TODO: create use context hook to get pool percentage from all assets.
-  const rewardPoolPercentage = 0.9606;
-
+  // global values
+  const rewardPoolPercentage = 0.01;
   const takeRateInterval = 5;
   const takeRate = 0.0000174331; // Some crazy complicated formula
+  const percentageMakeupOfRewardPoolValue = 0.5;
 
-  const principalStakeOnNativeChain = useMemo(
-    () => userInputValues.totalTokenSupply,
-    [userInputValues.totalTokenSupply]
-  );
-  const rewardPoolMakeup = useMemo(
-    () => userInputValues.totalTokenSupply * userInputValues.inflationRate,
-    [userInputValues.totalTokenSupply, userInputValues.inflationRate]
-  );
+  // derived values
+  const rewardPoolMakeup = useMemo(() => {
+    let sum = 0;
+
+    if (!allianceAssets[id]) return 0;
+    let thisSum = allianceAssets[id].inputValues.allianceRewardWeight;
+    Object.values(allianceAssets).forEach((asset) => {
+      sum += parseInt(asset.inputValues.allianceRewardWeight);
+    });
+    sum += nativeInputValues.allianceRewardWeight;
+
+    console.log(
+      "reward pool has updated",
+      id,
+      allianceAssets[id].inputValues.allianceRewardWeight,
+      sum
+    );
+
+    return thisSum / sum;
+  }, [allianceAssets, id, nativeInputValues.allianceRewardWeight]);
+
   const valueOfDenomInRewardPoolExcludingLSD = useMemo(
-    () => rewardPoolMakeup * userInputValues.assetPrice,
-    [rewardPoolMakeup, userInputValues.assetPrice]
+    () => userInputValues.lsdApr * 10,
+    [userInputValues.lsdApr]
   );
-
   const valueOfDenomInRewardPoolIncludingLSD = useMemo(
-    () =>
-      valueOfDenomInRewardPoolExcludingLSD +
-      rewardPoolMakeup * userInputValues.lsdApr * userInputValues.assetPrice,
-    [
-      rewardPoolMakeup,
-      valueOfDenomInRewardPoolExcludingLSD,
-      userInputValues.assetPrice,
-      userInputValues.lsdApr,
-    ]
+    () => userInputValues.lsdApr * 10,
+    [userInputValues.lsdApr]
   );
-
-  const percentageMakeupOfRewardPoolValue = useMemo(
-    () => valueOfDenomInRewardPoolIncludingLSD / poolTotalValueState,
-    [poolTotalValueState, valueOfDenomInRewardPoolIncludingLSD]
-  );
-
-  // TODO: this value will be one thing for LUNA but will change for other assets. track for "is luna"
   const principalStakeExcludingRewards = useMemo(
-    () => principalStakeOnNativeChain,
-    [principalStakeOnNativeChain]
+    () => userInputValues.lsdApr * 10,
+    [userInputValues.lsdApr]
   );
-
   const principalStakeIncludingLSD = useMemo(
-    () => userInputValues.totalTokenSupply * userInputValues.assetPrice,
-    [userInputValues.totalTokenSupply, userInputValues.assetPrice]
+    () => userInputValues.lsdApr * 10,
+    [userInputValues.lsdApr]
   );
-
   const stakingRewardValue = useMemo(
-    () => rewardPoolPercentage * poolTotalValueState,
-    [poolTotalValueState]
+    () => userInputValues.lsdApr * 10,
+    [userInputValues.lsdApr]
   );
-
   const stakingAPR = useMemo(
-    () =>
-      (principalStakeIncludingLSD +
-        stakingRewardValue -
-        principalStakeOnNativeChain * userInputValues.assetPrice) /
-      (principalStakeOnNativeChain * userInputValues.assetPrice),
-    [
-      principalStakeIncludingLSD,
-      principalStakeOnNativeChain,
-      stakingRewardValue,
-      userInputValues.assetPrice,
-    ]
+    () => userInputValues.lsdApr * 10,
+    [userInputValues.lsdApr]
   );
 
   // create map to lookup derived values later
   const derivedValues: AllianceCalculatedValues = {
-    rewardPoolOnAllianceChain,
     rewardPoolPercentage,
-    principalStakeOnNativeChain,
+    takeRateInterval,
+    takeRate,
     rewardPoolMakeup,
     valueOfDenomInRewardPoolExcludingLSD,
     valueOfDenomInRewardPoolIncludingLSD,
@@ -108,36 +86,13 @@ function AllianceAssetColumn({ id, label }: { id: number; label: string }) {
     principalStakeIncludingLSD,
     stakingRewardValue,
     stakingAPR,
-    takeRateInterval,
-    takeRate,
-  };
-
-  // input handler, get field value and update state
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const target = event.target;
-    const value = parseFloat(target.value);
-    const name = target.name as keyof AllianceInputValues;
-
-    if (isInputField(name)) {
-      setUserInputValues({
-        ...userInputValues,
-        [name]: value,
-      });
-    }
-
-    updatePoolTotalValue(id.toString(), valueOfDenomInRewardPoolIncludingLSD);
   };
 
   function handleRemoveAsset() {
     removeAllianceAsset(id);
   }
 
-  // helper functions to test for type
-  function isInputField(
-    key: AllianceFieldKey
-  ): key is keyof AllianceInputValues {
-    return key in userInputValues;
-  }
+  console.log({ rewardPoolMakeup });
 
   // render table for individual token
   return (
@@ -152,11 +107,11 @@ function AllianceAssetColumn({ id, label }: { id: number; label: string }) {
         return (
           <Card
             key={`section-${section}`}
+            assetId={id}
             index={i}
             type="alliance"
             section={section}
             userInputValues={userInputValues}
-            handleInputChange={handleInputChange}
             derivedValues={derivedValues}
           />
         );

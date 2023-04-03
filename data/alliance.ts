@@ -5,13 +5,11 @@ export interface AllianceInputValues {
   assetPrice: number;
   allianceRewardWeight: number;
   annualizedTakeRate: number;
-  denom: string;
+  principalStakeOnNativeChain: number;
 }
 
 export interface AllianceCalculatedValues {
-  rewardPoolOnAllianceChain: number;
   rewardPoolPercentage: number;
-  principalStakeOnNativeChain: number;
   rewardPoolMakeup: number;
   valueOfDenomInRewardPoolExcludingLSD: number;
   valueOfDenomInRewardPoolIncludingLSD: number;

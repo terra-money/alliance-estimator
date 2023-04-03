@@ -3,7 +3,7 @@ import { useAppState } from "@/contexts";
 import styles from "@/styles/Layout.module.css";
 
 function Layout() {
-  const { allianceAssets, addAllianceAsset } = useAppState();
+  const { allianceAssets, addAllianceAsset, nativeInputValues } = useAppState();
 
   return (
     <>
@@ -12,15 +12,19 @@ function Layout() {
       </header>
       <main className={styles.columnContainer}>
         <div className={styles.assetColumn}>
-          <NativeAssetColumn />
+          <NativeAssetColumn userInputValues={nativeInputValues} />
         </div>
-        {allianceAssets.map((asset, i) => {
+        {Object.keys(allianceAssets).map((assetId) => {
           return (
             <div
-              key={`alliance-asset-${asset.id}`}
+              key={`alliance-asset-${assetId}`}
               className={styles.assetColumn}
             >
-              <AllianceAssetColumn id={asset.id} label={asset.label} />
+              <AllianceAssetColumn
+                id={+assetId}
+                label={allianceAssets[+assetId].name}
+                userInputValues={allianceAssets[+assetId].inputValues}
+              />
             </div>
           );
         })}

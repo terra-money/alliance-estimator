@@ -7,36 +7,48 @@ import {
   AllianceFieldKey,
   AllianceCalculatedValues,
   AllianceInputValues,
+  InputValues,
+  CalculatedValues,
+  isInputField,
+  isDerivedField,
 } from "@/data";
+import { useAppState } from "@/contexts";
 import cardStyles from "../styles/Card.module.scss";
-
-type InputValues = AllianceInputValues | NativeInputValues;
-type CalculatedValues = AllianceCalculatedValues | NativeCalculatedValues;
-type FieldKeys = AllianceFieldKey | NativeFieldKey;
 
 const Card = ({
   section,
   type,
   userInputValues,
-  handleInputChange,
   derivedValues,
+  assetId,
   index,
 }: {
+  assetId?: number;
   section: string;
   type: string;
   userInputValues: InputValues;
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   derivedValues: CalculatedValues;
   index: number;
 }) => {
+  console.log("card rendered", section, type, assetId, derivedValues);
+  const { handleNativeInputChange, handleAllianceInputChange } = useAppState();
   const fields = type === "native" ? nativeFieldMap : allianceFieldMap;
 
-  function isDerivedField(key: FieldKeys): key is keyof CalculatedValues {
-    return key in derivedValues;
-  }
-
-  function isInputField(key: FieldKeys): key is keyof InputValues {
-    return key in userInputValues;
+  function handleInputUpdate(e: React.ChangeEvent<HTMLInputElement>) {
+    if (type === "native") {
+      console.log("native triggered", e.target.name, e.target.value);
+      handleNativeInputChange(
+        e.target.name as keyof NativeInputValues,
+        e.target.value
+      );
+    } else {
+      if (assetId === undefined) return;
+      handleAllianceInputChange(
+        assetId,
+        e.target.name as keyof AllianceInputValues,
+        e.target.value
+      );
+    }
   }
 
   return (
@@ -59,15 +71,17 @@ const Card = ({
                   type="text"
                   name={field.name}
                   value={
-                    isInputField(field.name) ? userInputValues[field.name] : ""
+                    isInputField(field.name, userInputValues)
+                      ? userInputValues[field.name]
+                      : ""
                   }
-                  onChange={handleInputChange}
+                  onChange={handleInputUpdate}
                   disabled={!field.input}
                 />
               ) : (
                 <div className={cardStyles.textValue}>
-                  {isDerivedField(field.name)
-                    ? derivedValues[field.name].toFixed(2)
+                  {isDerivedField(field.name, derivedValues)
+                    ? Number(derivedValues[field.name]).toFixed(2)
                     : ""}
                 </div>
               )}
