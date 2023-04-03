@@ -16,7 +16,6 @@ export interface AllianceCalculatedValues {
   valueOfDenomInRewardPoolExcludingLSD: number;
   valueOfDenomInRewardPoolIncludingLSD: number;
   percentageMakeupOfRewardPoolValue: number;
-  poolTotalValue: number;
   principalStakeExcludingRewards: number;
   principalStakeIncludingLSD: number;
   stakingRewardValue: number;
@@ -123,12 +122,6 @@ export const allianceFields: AllianceField[] = [
     label: "% makeup of reward pool value",
     input: false,
     advanced: true,
-  },
-  {
-    group: "Pool Total Value",
-    name: "percentageMakeupOfRewardPoolValue",
-    label: "(including LSD appreciation)",
-    input: false,
   },
   {
     group: "Principal",

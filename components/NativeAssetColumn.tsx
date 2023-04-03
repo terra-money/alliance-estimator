@@ -1,14 +1,17 @@
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   nativeFieldMap,
   NativeFieldKey,
   NativeCalculatedValues,
   NativeInputValues,
 } from "@/data";
+import { useAppState } from "@/contexts";
 import styles from "@/styles/NativeAssetColumn.module.css";
 import Card from './Card';
 
 function NativeAssetColumn() {
+  const { poolTotalValueState, updatePoolTotalValue } = useAppState();
+
   const [values, setValues] = useState<NativeInputValues>({
     inflationRate: 0.07,
     lsdApr: 0,
@@ -53,10 +56,9 @@ function NativeAssetColumn() {
     ]
   );
 
-  // TODO: create use context hook to track total values across assets.
   const poolTotalValue = useMemo(
-    () => valueOfDenomInRewardPoolIncludingLSD,
-    [valueOfDenomInRewardPoolIncludingLSD]
+    () => poolTotalValueState,
+    [poolTotalValueState]
   );
 
   const percentageMakeupOfRewardPoolValue = useMemo(
@@ -122,6 +124,7 @@ function NativeAssetColumn() {
         [name]: value,
       });
     }
+    updatePoolTotalValue("luna", valueOfDenomInRewardPoolIncludingLSD);
   };
 
   // helper functions to test for type
