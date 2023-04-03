@@ -6,7 +6,7 @@ import {
   allianceFieldMap,
   AllianceFieldKey,
   AllianceCalculatedValues,
-  AllianceInputValues
+  AllianceInputValues,
 } from "@/data";
 import cardStyles from "../styles/Card.module.scss";
 
@@ -18,15 +18,14 @@ const Card = ({
   isDerivedField,
   derivedValues,
 }: {
-  section: string
-  type: string
-  values: NativeInputValues | AllianceInputValues
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-  // isDerivedField:
-  //   (key: NativeFieldKey | AllianceFieldKey) => key is any
-  // derivedValues: NativeCalculatedValues | AllianceCalculatedValues
-  isDerivedField: any
-  derivedValues: any
+  section: string;
+  type: string;
+  values: AllianceInputValues;
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  isDerivedField: (
+    key: AllianceFieldKey
+  ) => key is keyof AllianceCalculatedValues;
+  derivedValues: AllianceCalculatedValues;
 }) => {
   const fields = type === "native" ? nativeFieldMap : allianceFieldMap;
 
@@ -35,13 +34,12 @@ const Card = ({
       <h3 className={cardStyles.fieldSectionHeader}>{section}</h3>
       <div className={cardStyles.inputs}>
         {fields[section].map((field, i) => (
-          <div
-            className={`${cardStyles.fieldRow}`}
-            key={field.name}
-          >
+          <div className={`${cardStyles.fieldRow}`} key={field.name}>
             <div className={cardStyles.labelContainer}>
               <div className={cardStyles.fieldLabel}>{field.label}:</div>
-              <div className={cardStyles.secondaryLabel}>{field.secondaryLabel}</div>
+              <div className={cardStyles.secondaryLabel}>
+                {field.secondaryLabel}
+              </div>
             </div>
             <div className={cardStyles.fieldValue}>
               {field.input ? (
@@ -59,18 +57,18 @@ const Card = ({
                   disabled={!field.input}
                 />
               ) : (
-                <div className={cardStyles.textValue}>{
-                  isDerivedField(field.name) ?
-                  derivedValues[field.name].toFixed(2)
-                  : ""
-                }</div>
+                <div className={cardStyles.textValue}>
+                  {isDerivedField(field.name)
+                    ? derivedValues[field.name].toFixed(2)
+                    : ""}
+                </div>
               )}
             </div>
           </div>
         ))}
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default Card;

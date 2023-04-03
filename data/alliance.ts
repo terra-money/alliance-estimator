@@ -37,9 +37,7 @@ export interface AllianceField {
   advanced?: boolean;
 }
 
-export type AllianceFieldMap = {
-  [key: string]: AllianceField[];
-};
+export type AllianceFieldMap = Record<string, AllianceField[]>;
 
 export const allianceFields: AllianceField[] = [
   {

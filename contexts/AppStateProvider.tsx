@@ -20,9 +20,9 @@ export const [useAppState, AppStateProvider] =
 export function InitAppState({ children }: { children: ReactNode }) {
   const [allianceAssets, setAllianceAssets] = useState<AllianceAsset[]>([
     { id: 0, label: "WHALELSD" },
-    { id: 1, label: "KUJILSD" },
-    { id: 2, label: "OSMOLSD" },
-    { id: 3, label: "OSMOLSD2" },
+    // { id: 1, label: "KUJILSD" },
+    // { id: 2, label: "OSMOLSD" },
+    // { id: 3, label: "OSMOLSD2" },
   ]);
   const [poolValues, setPoolValues] = useState<Record<string, number>>({});
 
