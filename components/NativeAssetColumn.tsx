@@ -15,6 +15,33 @@ function NativeAssetColumn({
   userInputValues: NativeInputValues;
 }) {
   const { poolTotalValue: poolTotal, allianceAssets } = useAppState();
+  const [cardExpansions, setCardExpansions] = useState<Record<string, boolean>>(
+    Object.keys(nativeFieldMap).reduce(
+      (acc, _, i) => ({ ...acc, [i]: true }),
+      {}
+    )
+  );
+
+  function toggleExpansion(index: number) {
+    const newCardState = { [index]: !cardExpansions[index] };
+    setCardExpansions({ ...cardExpansions, ...newCardState });
+  }
+
+  function expandAll() {
+    const newCardState = Object.keys(cardExpansions).reduce(
+      (acc, curr) => ({ ...acc, [curr]: true }),
+      {}
+    );
+    setCardExpansions(newCardState);
+  }
+
+  function collapseAll() {
+    const newCardState = Object.keys(cardExpansions).reduce(
+      (acc, curr) => ({ ...acc, [curr]: false }),
+      {}
+    );
+    setCardExpansions(newCardState);
+  }
 
   const poolTotalValue = useMemo(() => poolTotal, [poolTotal]);
 
@@ -29,7 +56,6 @@ function NativeAssetColumn({
 
     let nativeWeight = userInputValues.allianceRewardWeight;
     Object.values(allianceAssets).forEach((asset) => {
-      console.log(asset.inputValues.allianceRewardWeight);
       allianceTotalWeight += asset.inputValues.allianceRewardWeight;
     });
 
@@ -113,10 +139,16 @@ function NativeAssetColumn({
     <div className={styles.container}>
       <div className={styles.assetHeader}>
         <h2 className={styles.assetName}>LUNA</h2>
+        <div className={styles.columnActions}>
+          <button onClick={expandAll}>Expand All</button>
+          <button onClick={collapseAll}>Collapse All</button>
+        </div>
       </div>
       {Object.keys(nativeFieldMap).map((section, i) => {
         return (
           <Card
+            toggleExpansion={toggleExpansion}
+            expanded={cardExpansions[i]}
             key={`section-${section}`}
             index={i}
             type="native"
