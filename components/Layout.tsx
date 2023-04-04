@@ -1,13 +1,13 @@
 import { NativeAssetColumn, AllianceAssetColumn } from "@/components";
 import { useAppState } from "@/contexts";
-import styles from "@/styles/Layout.module.css";
+import styles from "@/styles/Layout.module.scss";
 
 function Layout() {
   const { allianceAssets, addAllianceAsset, nativeInputValues } = useAppState();
 
   return (
     <>
-      <header>
+      <header className={styles.header}>
         <h1>Phoenix Validator Reward Estimator</h1>
       </header>
       <main className={styles.columnContainer}>

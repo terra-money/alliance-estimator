@@ -1,76 +1,122 @@
 .fieldSection {
-  background-color: #1A1A23;
-  border: 1px solid #393939;
-  border-radius: 8px;
+  border-radius: 4px;
   width: 600px;
 }
 
-.fieldSectionHeader {
-  padding: 16px 20px;
-  background-color: #21212C;
-  border-bottom: 1px solid #393939;
-  border-top-right-radius: 8px;
-  border-top-left-radius: 8px;
-
-  font-size: 20px;
-  font-weight: 500;
-  line-height: 120%;
-  color: #FFFFFF;
-}
-
-.inputs {
-  padding: 12px 20px;
+.accordion {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-}
+  align-items: center;
+  justify-content: normal;
+  background-color: var(--card-bg);
+  border-radius: 4px;
+  width: 100%;
 
-.fieldRow {
-  display: flex;
-  justify-content: space-between;
-  border-radius: 6px;
-}
-
-.labelContainer {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-.fieldLabel {
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 120%;
-  color: #E8E8E8;
-}
-
-.secondaryLabel {
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 120%;
-  color: #8A8AA0;
-}
-
-.fieldValue {
-  width: 200px;
-
-  input {
-    padding: 8px 12px;
-    background-color: #1F1F2C;
-    border: 1px solid #393939;
+  .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    background-color: var(--card-header);
+    padding: 20px;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
-    font-size: 16px;
-    font-weight: 500;
-    line-height: 120%;
-    color: #FFFFFF;
-    font-family: "Gotham";
-    width: inherit;
+    cursor: pointer;
+    transition: all 0.3s, border-radius 0.3s 0.3s;
+
+    .title {
+      font-size: clamp(14px, 2vw, 18px);
+
+      font-size: 20px;
+      font-weight: 500;
+    }
+
+    .icon {
+      width: 30px;
+      transition: transform 0.3s;
+    }
+
+    // &:hover {
+    //   background-color: var(--bg-muted);
+    //   border-color: var(--input-border);
+    // }
   }
 
-  .textValue {
-    font-size: 20px;
-    font-weight: 500;
-    line-height: 120%;
-    color: #FFFFFF;
-    width: inherit;
+  .content {
+    padding: 0 20px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border: 1px solid var(--border-color);
+    border-top: 0;
+    border-radius: 0 0 4px 4px;
+
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: opacity 0.5s ease-in, max-height 0.4s ease-in,
+      padding-top 0.3s ease-in 0.05s, padding-bottom 0.4s ease 0.2s;
+
+    .fieldRow {
+      display: flex;
+      justify-content: space-between;
+      border-radius: 6px;
+    }
+
+    .labelContainer {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .fieldLabel {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--font-color-muted);
+    }
+
+    .secondaryLabel {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--font-color-secondary);
+    }
+
+    .fieldValue {
+      width: 200px;
+
+      input {
+        padding: 8px 12px;
+        background-color: var(--input-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        font-size: 16px;
+        font-weight: 500;
+
+        width: inherit;
+      }
+
+      .textValue {
+        font-size: 20px;
+        font-weight: 500;
+        width: inherit;
+      }
+    }
+  }
+
+  &.opened {
+    .top {
+      border-radius: 4px 4px 0 0;
+    }
+
+    .content {
+      opacity: 1;
+      padding-top: 12px;
+      padding-bottom: 12px;
+      max-height: 375px;
+    }
+
+    .icon {
+      transform: rotate(180deg);
+    }
   }
 }

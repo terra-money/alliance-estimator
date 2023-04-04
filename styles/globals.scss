@@ -1,8 +1,22 @@
+:root {
+  --header-height: 40px;
+  --bg: #0D0D11;
+  --font-color: #FFFFFF;
+  --font-color-muted: #E8E8E8;
+  --font-color-secondary: #8A8AA0;
+  --card-header: #21212C;
+  --card-bg: #1A1A23;
+  --border-color: #393939;
+  --input-bg: #1F1F2C;
+}
 
 * {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+  line-height: 120%;
+  color: var(--font-color);
+  font-family: "Gotham";
 }
 
 html,
@@ -10,11 +24,12 @@ body {
   max-width: 100vw;
   overflow-x: hidden;
   font-family: "Gotham", sans-serif;
+  height: 100%;
 }
 
 body {
-  color: #FFFFFF;
-  background: #0D0D11;
+  color: var(--font-color);
+  background: var(--bg);
 }
 
 a {
