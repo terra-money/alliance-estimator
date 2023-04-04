@@ -14,7 +14,9 @@ function NativeAssetColumn({
 }: {
   userInputValues: NativeInputValues;
 }) {
-  const { poolTotalValue } = useAppState();
+  const { poolTotalValue: poolTotal, allianceAssets } = useAppState();
+
+  const poolTotalValue = useMemo(() => poolTotal, [poolTotal]);
 
   // cache derived values
   const rewardPoolOnNativeChain = useMemo(
@@ -22,8 +24,17 @@ function NativeAssetColumn({
     [userInputValues.inflationRate, userInputValues.totalTokenSupply]
   );
 
-  // TODO: create use context hook to get pool percentage from all assets.
-  const rewardPoolPercentage = 1;
+  const rewardPoolPercentage = useMemo(() => {
+    let allianceTotalWeight = 0;
+
+    let nativeWeight = userInputValues.allianceRewardWeight;
+    Object.values(allianceAssets).forEach((asset) => {
+      console.log(asset.inputValues.allianceRewardWeight);
+      allianceTotalWeight += asset.inputValues.allianceRewardWeight;
+    });
+
+    return nativeWeight / (allianceTotalWeight + nativeWeight);
+  }, [allianceAssets, userInputValues.allianceRewardWeight]);
 
   const rewardPoolMakeup = useMemo(
     () => userInputValues.totalTokenSupply * userInputValues.inflationRate,
@@ -63,7 +74,7 @@ function NativeAssetColumn({
 
   const stakingRewardValue = useMemo(
     () => rewardPoolPercentage * poolTotalValue,
-    [poolTotalValue]
+    [poolTotalValue, rewardPoolPercentage]
   );
 
   const stakingAPR = useMemo(

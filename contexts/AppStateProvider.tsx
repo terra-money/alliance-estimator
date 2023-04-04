@@ -45,7 +45,6 @@ export function InitAppState({ children }: { children: ReactNode }) {
       totalTokenSupply: 1073271122,
       assetPrice: 1.3,
       allianceRewardWeight: 1,
-      annualizedTakeRate: 0,
       denom: "Luna",
     }
   );
@@ -58,6 +57,26 @@ export function InitAppState({ children }: { children: ReactNode }) {
         allianceRewardWeight: 0.001,
         annualizedTakeRate: 0.16,
         principalStakeOnNativeChain: 10000000,
+      },
+    },
+    1: {
+      name: "KUJILSD",
+      inputValues: {
+        lsdApr: 0.16,
+        assetPrice: 0.424,
+        allianceRewardWeight: 0.01,
+        annualizedTakeRate: 0.11,
+        principalStakeOnNativeChain: 9000000,
+      },
+    },
+    2: {
+      name: "OSMOLSD",
+      inputValues: {
+        lsdApr: 0.22,
+        assetPrice: 0.819,
+        allianceRewardWeight: 0.04,
+        annualizedTakeRate: 0.22,
+        principalStakeOnNativeChain: 19000000,
       },
     },
   });
@@ -78,22 +97,21 @@ export function InitAppState({ children }: { children: ReactNode }) {
           inputValues.assetPrice;
     });
 
-    nativeAssetValue +=
-      nativeInputValues.principalStakeOnNativeChain *
-        nativeInputValues.annualizedTakeRate *
-        nativeInputValues.assetPrice +
-      nativeInputValues.principalStakeOnNativeChain *
-        nativeInputValues.annualizedTakeRate *
-        nativeInputValues.lsdApr *
-        nativeInputValues.assetPrice;
+    nativeAssetValue =
+      Number(nativeInputValues.totalTokenSupply) *
+        Number(nativeInputValues.inflationRate) *
+        Number(nativeInputValues.assetPrice) +
+      Number(nativeInputValues.totalTokenSupply) *
+        Number(nativeInputValues.inflationRate) *
+        0 *
+        Number(nativeInputValues.assetPrice);
 
     return allianceAssetValue + nativeAssetValue;
   }, [
     allianceAssets,
-    nativeInputValues.annualizedTakeRate,
     nativeInputValues.assetPrice,
-    nativeInputValues.lsdApr,
-    nativeInputValues.principalStakeOnNativeChain,
+    nativeInputValues.inflationRate,
+    nativeInputValues.totalTokenSupply,
   ]);
 
   // handlers

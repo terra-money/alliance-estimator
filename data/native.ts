@@ -1,11 +1,10 @@
 export interface NativeInputValues {
+  denom: string;
   inflationRate: number;
   lsdApr: number;
   totalTokenSupply: number;
-  denom: string;
   assetPrice: number;
   allianceRewardWeight: number;
-  annualizedTakeRate: number;
   principalStakeOnNativeChain: number;
 }
 
