@@ -31,6 +31,8 @@ export interface AllianceField {
   input: boolean;
   group: string;
   advanced?: boolean;
+  format?: (value: number) => string;
+  parse?: (value: string) => string;
 }
 
 export type AllianceFieldMap = Record<string, AllianceField[]>;
@@ -60,6 +62,7 @@ export const allianceFields: AllianceField[] = [
     label: "Reward Pool Percentage",
     input: false,
     name: "rewardPoolPercentage",
+    format: (value) => (value * 100).toFixed(4) + " %",
   },
   {
     group: "Alliance Asset Parameters",
@@ -80,6 +83,7 @@ export const allianceFields: AllianceField[] = [
     secondaryLabel: "Module Parameter",
     input: false,
     name: "takeRate",
+    format: (value) => value.toPrecision(11),
   },
   {
     group: "Reward Pool",
@@ -116,6 +120,7 @@ export const allianceFields: AllianceField[] = [
     label: "% makeup of reward pool value",
     input: false,
     advanced: true,
+    format: (value) => (value * 100).toFixed(4) + " %",
   },
   {
     group: "Principal",
@@ -146,6 +151,7 @@ export const allianceFields: AllianceField[] = [
     label: "Staking APR",
     secondaryLabel: "Including LSD appreciation and take rate",
     input: false,
+    format: (value) => (value * 100).toFixed(4) + " %",
   },
 ];
 
