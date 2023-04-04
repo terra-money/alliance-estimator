@@ -33,6 +33,8 @@ export interface NativeField {
   input: boolean;
   group: string;
   advanced?: boolean;
+  format?: (value: number) => string;
+  parse?: (value: string) => string;
 }
 
 export type NativeFieldMap = {
@@ -88,6 +90,7 @@ export const nativeFields: NativeField[] = [
     label: "Reward Pool Percentage",
     input: false,
     name: "rewardPoolPercentage",
+    format: (value) => (value * 100).toFixed(4) + " %",
   },
   {
     group: "Reward Pool",
@@ -125,6 +128,7 @@ export const nativeFields: NativeField[] = [
     label: "% makeup of reward pool value",
     input: false,
     advanced: true,
+    format: (value) => (value * 100).toFixed(4) + " %",
   },
   {
     group: "Pool Total Value",
@@ -161,6 +165,7 @@ export const nativeFields: NativeField[] = [
     label: "Estimated percentage change over 1 year",
     secondaryLabel: "Including LSD appreciation and take rate",
     input: false,
+    format: (value) => (value * 100).toFixed(4) + " %",
   },
 ];
 

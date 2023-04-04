@@ -7,6 +7,7 @@ import {
 } from "@/data";
 import { useAppState } from "@/contexts";
 import styles from "@/styles/AllianceAssetColumn.module.scss";
+import { TAKE_RATE_INTERVAL } from "@/constants";
 import Card from "./Card";
 import ActionButtons from './ActionButtons';
 
@@ -57,7 +58,7 @@ function AllianceAssetColumn({
   }
 
   // global values
-  const takeRateInterval = 5;
+  const takeRateInterval = TAKE_RATE_INTERVAL;
 
   // derived values
   // reward pool Percentage
@@ -85,7 +86,7 @@ function AllianceAssetColumn({
         Math.log(inputValues.annualizedTakeRate) / (525600 / takeRateInterval)
       )
     );
-  }, [inputValues.annualizedTakeRate]);
+  }, [inputValues.annualizedTakeRate, takeRateInterval]);
 
   // reward pool makeup
   const rewardPoolMakeup = useMemo(() => {
