@@ -65,11 +65,11 @@ function AllianceAssetColumn({
 
     let thisSum = inputValues.allianceRewardWeight;
     Object.values(allianceAssets).forEach((asset) => {
-      sum += parseInt(asset.inputValues.allianceRewardWeight);
+      sum += +asset.inputValues.allianceRewardWeight;
     });
-    sum += nativeInputValues.allianceRewardWeight;
+    sum += +nativeInputValues.allianceRewardWeight;
 
-    return thisSum / sum;
+    return +thisSum / +sum;
   }, [
     allianceAssets,
     inputValues.allianceRewardWeight,

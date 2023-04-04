@@ -55,11 +55,12 @@ function NativeAssetColumn({
     let allianceTotalWeight = 0;
 
     let nativeWeight = userInputValues.allianceRewardWeight;
+
     Object.values(allianceAssets).forEach((asset) => {
-      allianceTotalWeight += asset.inputValues.allianceRewardWeight;
+      allianceTotalWeight += +asset.inputValues.allianceRewardWeight;
     });
 
-    return nativeWeight / (allianceTotalWeight + nativeWeight);
+    return +nativeWeight / (+allianceTotalWeight + +nativeWeight);
   }, [allianceAssets, userInputValues.allianceRewardWeight]);
 
   const rewardPoolMakeup = useMemo(
