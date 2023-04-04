@@ -1,17 +1,13 @@
 export interface AllianceInputValues {
-  inflationRate: number;
   lsdApr: number;
-  totalTokenSupply: number;
   assetPrice: number;
   allianceRewardWeight: number;
   annualizedTakeRate: number;
-  denom: string;
+  principalStakeOnNativeChain: number;
 }
 
 export interface AllianceCalculatedValues {
-  rewardPoolOnAllianceChain: number;
   rewardPoolPercentage: number;
-  principalStakeOnNativeChain: number;
   rewardPoolMakeup: number;
   valueOfDenomInRewardPoolExcludingLSD: number;
   valueOfDenomInRewardPoolIncludingLSD: number;
@@ -37,9 +33,7 @@ export interface AllianceField {
   advanced?: boolean;
 }
 
-export type AllianceFieldMap = {
-  [key: string]: AllianceField[];
-};
+export type AllianceFieldMap = Record<string, AllianceField[]>;
 
 export const allianceFields: AllianceField[] = [
   {

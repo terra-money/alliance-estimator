@@ -1,17 +1,16 @@
 export interface NativeInputValues {
+  denom: string;
   inflationRate: number;
   lsdApr: number;
   totalTokenSupply: number;
-  denom: string;
   assetPrice: number;
   allianceRewardWeight: number;
-  annualizedTakeRate: number;
+  principalStakeOnNativeChain: number;
 }
 
 export interface NativeCalculatedValues {
   rewardPoolOnNativeChain: number;
   rewardPoolPercentage: number;
-  principalStakeOnTerra: number;
   rewardPoolMakeup: number;
   valueOfDenomInRewardPoolExcludingLSD: number;
   valueOfDenomInRewardPoolIncludingLSD: number;
@@ -90,17 +89,10 @@ export const nativeFields: NativeField[] = [
     input: false,
     name: "rewardPoolPercentage",
   },
-  // {
-  //   group: "Alliance Asset Parameters",
-  //   label: "Annualized Take Rate",
-  //   secondaryLabel: "For LSDs",
-  //   input: true,
-  //   name: "annualizedTakeRate",
-  // },
   {
     group: "Reward Pool",
-    name: "principalStakeOnTerra",
-    label: "Principal stake on Native chain",
+    name: "principalStakeOnNativeChain",
+    label: "Principal stake on native chain",
     input: true,
   },
   {
@@ -159,14 +151,14 @@ export const nativeFields: NativeField[] = [
   {
     group: "Yield",
     name: "stakingRewardValue",
-    label: "Staking reward value",
+    label: "Estimated staking reward value",
     secondaryLabel: "Including LSD yield",
     input: false,
   },
   {
     group: "Yield",
     name: "stakingAPR",
-    label: "Staking APR",
+    label: "Estimated percentage change over 1 year",
     secondaryLabel: "Including LSD appreciation and take rate",
     input: false,
   },

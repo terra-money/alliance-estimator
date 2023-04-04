@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import {
   allianceFieldMap,
   AllianceFieldKey,
@@ -7,99 +7,130 @@ import {
 } from "@/data";
 import { useAppState } from "@/contexts";
 import styles from "@/styles/AllianceAssetColumn.module.css";
-import Card from './Card';
+import Card from "./Card";
 
-function AllianceAssetColumn({ id, label }: { id: number; label: string }) {
-  const { removeAllianceAsset, poolTotalValueState, updatePoolTotalValue } =
-    useAppState();
+function AllianceAssetColumn({
+  id,
+  label,
+  userInputValues,
+}: {
+  id: number;
+  label: string;
+  userInputValues: AllianceInputValues;
+}) {
+  const {
+    removeAllianceAsset,
+    allianceAssets,
+    nativeInputValues,
+    poolTotalValue,
+  } = useAppState();
 
-  const [values, setValues] = useState<AllianceInputValues>({
-    inflationRate: 0.07,
-    lsdApr: 0,
-    totalTokenSupply: 100,
-    assetPrice: 1.3,
-    allianceRewardWeight: 1,
-    annualizedTakeRate: 0,
-    denom: "",
-  });
+  const inputValues = allianceAssets[id].inputValues;
 
-  // cache derived values
-  const rewardPoolOnAllianceChain = useMemo(
-    () => values.inflationRate * values.totalTokenSupply,
-    [values.inflationRate, values.totalTokenSupply]
-  );
-
-  // TODO: create use context hook to get pool percentage from all assets.
-  const rewardPoolPercentage = 0.9606;
-
+  // global values
   const takeRateInterval = 5;
-  const takeRate = 0.0000174331 // Some crazy complicated formula
 
-  const principalStakeOnNativeChain = useMemo(
-    () => values.totalTokenSupply,
-    [values.totalTokenSupply]
-  );
-  const rewardPoolMakeup = useMemo(
-    () => values.totalTokenSupply * values.inflationRate,
-    [values.totalTokenSupply, values.inflationRate]
-  );
-  const valueOfDenomInRewardPoolExcludingLSD = useMemo(
-    () => rewardPoolMakeup * values.assetPrice,
-    [rewardPoolMakeup, values.assetPrice]
-  );
+  // derived values
+  // reward pool Percentage
+  const rewardPoolPercentage = useMemo(() => {
+    let sum = 0;
 
-  const valueOfDenomInRewardPoolIncludingLSD = useMemo(
-    () =>
+    let thisSum = inputValues.allianceRewardWeight;
+    Object.values(allianceAssets).forEach((asset) => {
+      sum += parseInt(asset.inputValues.allianceRewardWeight);
+    });
+    sum += nativeInputValues.allianceRewardWeight;
+
+    return thisSum / sum;
+  }, [
+    allianceAssets,
+    inputValues.allianceRewardWeight,
+    nativeInputValues.allianceRewardWeight,
+  ]);
+
+  // take rate
+  const takeRate = useMemo(() => {
+    return (
+      1 -
+      Math.exp(
+        Math.log(inputValues.annualizedTakeRate) / (525600 / takeRateInterval)
+      )
+    );
+  }, [inputValues.annualizedTakeRate]);
+
+  // reward pool makeup
+  const rewardPoolMakeup = useMemo(() => {
+    return (
+      inputValues.principalStakeOnNativeChain * inputValues.annualizedTakeRate
+    );
+  }, [inputValues.annualizedTakeRate, inputValues.principalStakeOnNativeChain]);
+
+  // value of denom in reward pool excluding LSD
+  const valueOfDenomInRewardPoolExcludingLSD = useMemo(() => {
+    return rewardPoolMakeup * inputValues.assetPrice;
+  }, [inputValues.assetPrice, rewardPoolMakeup]);
+
+  // value of denom in reward pool including LSD
+  const valueOfDenomInRewardPoolIncludingLSD = useMemo(() => {
+    return (
       valueOfDenomInRewardPoolExcludingLSD +
-      rewardPoolMakeup * values.lsdApr * values.assetPrice,
-    [
-      rewardPoolMakeup,
-      valueOfDenomInRewardPoolExcludingLSD,
-      values.assetPrice,
-      values.lsdApr,
-    ]
-  );
+      rewardPoolMakeup * inputValues.lsdApr * inputValues.assetPrice
+    );
+  }, [
+    inputValues.assetPrice,
+    inputValues.lsdApr,
+    rewardPoolMakeup,
+    valueOfDenomInRewardPoolExcludingLSD,
+  ]);
 
-  const percentageMakeupOfRewardPoolValue = useMemo(
-    () => valueOfDenomInRewardPoolIncludingLSD / poolTotalValueState,
-    [poolTotalValueState, valueOfDenomInRewardPoolIncludingLSD]
-  );
+  // % makeup of reward pool value
+  const percentageMakeupOfRewardPoolValue = useMemo(() => {
+    return valueOfDenomInRewardPoolIncludingLSD / poolTotalValue;
+  }, [poolTotalValue, valueOfDenomInRewardPoolIncludingLSD]);
 
-  // TODO: this value will be one thing for LUNA but will change for other assets. track for "is luna"
-  const principalStakeExcludingRewards = useMemo(
-    () => principalStakeOnNativeChain,
-    [principalStakeOnNativeChain]
-  );
+  // principal stake excluding rewards
+  const principalStakeExcludingRewards = useMemo(() => {
+    return inputValues.principalStakeOnNativeChain - rewardPoolMakeup;
+  }, [inputValues.principalStakeOnNativeChain, rewardPoolMakeup]);
 
-  const principalStakeIncludingLSD = useMemo(
-    () => values.totalTokenSupply * values.assetPrice,
-    [values.totalTokenSupply, values.assetPrice]
-  );
+  // principal stake including LSD
+  const principalStakeIncludingLSD = useMemo(() => {
+    return (
+      principalStakeExcludingRewards *
+      inputValues.assetPrice *
+      (1 + inputValues.lsdApr)
+    );
+  }, [
+    inputValues.assetPrice,
+    inputValues.lsdApr,
+    principalStakeExcludingRewards,
+  ]);
 
-  const stakingRewardValue = useMemo(
-    () => rewardPoolPercentage * poolTotalValueState,
-    [poolTotalValueState]
-  );
+  // staking reward value
+  const stakingRewardValue = useMemo(() => {
+    return poolTotalValue * rewardPoolPercentage;
+  }, [poolTotalValue, rewardPoolPercentage]);
 
-  const stakingAPR = useMemo(
-    () =>
+  // staking APR
+  const stakingAPR = useMemo(() => {
+    return (
       (principalStakeIncludingLSD +
         stakingRewardValue -
-        principalStakeOnNativeChain * values.assetPrice) /
-      (principalStakeOnNativeChain * values.assetPrice),
-    [
-      principalStakeIncludingLSD,
-      principalStakeOnNativeChain,
-      stakingRewardValue,
-      values.assetPrice,
-    ]
-  );
+        inputValues.principalStakeOnNativeChain * inputValues.assetPrice) /
+      (inputValues.principalStakeOnNativeChain * inputValues.assetPrice)
+    );
+  }, [
+    inputValues.assetPrice,
+    inputValues.principalStakeOnNativeChain,
+    principalStakeIncludingLSD,
+    stakingRewardValue,
+  ]);
 
   // create map to lookup derived values later
   const derivedValues: AllianceCalculatedValues = {
-    rewardPoolOnAllianceChain,
     rewardPoolPercentage,
-    principalStakeOnNativeChain,
+    takeRateInterval,
+    takeRate,
     rewardPoolMakeup,
     valueOfDenomInRewardPoolExcludingLSD,
     valueOfDenomInRewardPoolIncludingLSD,
@@ -108,63 +139,30 @@ function AllianceAssetColumn({ id, label }: { id: number; label: string }) {
     principalStakeIncludingLSD,
     stakingRewardValue,
     stakingAPR,
-    takeRateInterval,
-    takeRate,
-  };
-
-  // input handler, get field value and update state
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const target = event.target;
-    const value = parseFloat(target.value);
-    const name = target.name as keyof AllianceInputValues;
-
-    if (isInputField(name)) {
-      setValues({
-        ...values,
-        [name]: value,
-      });
-    }
-
-    updatePoolTotalValue(id.toString(), valueOfDenomInRewardPoolIncludingLSD);
   };
 
   function handleRemoveAsset() {
     removeAllianceAsset(id);
   }
 
-  // helper functions to test for type
-  function isInputField(
-    key: AllianceFieldKey
-  ): key is keyof AllianceInputValues {
-    return key in values;
-  }
-
-  function isDerivedField(
-    key: AllianceFieldKey
-  ): key is keyof AllianceCalculatedValues {
-    return key in derivedValues;
-  }
-
   // render table for individual token
   return (
     <div className={styles.container}>
       <div className={styles.assetHeader}>
-        <h2 className={styles.assetName}>
-          {id} - {label}
-        </h2>
+        <h2 className={styles.assetName}>{label}</h2>
         <div className={styles.removeButton}>
           <button onClick={handleRemoveAsset}>Remove Asset</button>
         </div>
       </div>
-      {Object.keys(allianceFieldMap).map((section) => {
+      {Object.keys(allianceFieldMap).map((section, i) => {
         return (
           <Card
             key={`section-${section}`}
+            assetId={id}
+            index={i}
             type="alliance"
             section={section}
-            values={values}
-            handleInputChange={handleInputChange}
-            isDerivedField={isDerivedField}
+            userInputValues={userInputValues}
             derivedValues={derivedValues}
           />
         );
