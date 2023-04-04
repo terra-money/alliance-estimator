@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useMemo } from "react";
 import { createContext } from "@/utils";
 import {
   NativeInputValues,
@@ -19,8 +19,7 @@ export interface IAppState {
   allianceAssets: AllianceAssets;
   addAllianceAsset: (asset: string) => void;
   removeAllianceAsset: (index: number) => void;
-  poolTotalValueState: number;
-  updatePoolTotalValue: (asset: string, value: number) => void;
+  poolTotalValue: number;
   nativeInputValues: NativeInputValues;
   handleNativeInputChange: (
     fieldName: keyof NativeInputValues,
@@ -50,30 +49,54 @@ export function InitAppState({ children }: { children: ReactNode }) {
       denom: "Luna",
     }
   );
-  const [allianceAssets, setAllianceAssets] = useState<AllianceAssets>(
-    {
-      0: {
-        name: "WHALELSD",
-        inputValues: {
-          inflationRate: 0,
-          lsdApr: 0,
-          totalTokenSupply: 0,
-          assetPrice: 0,
-          allianceRewardWeight: 0,
-          annualizedTakeRate: 0,
-          principalStakeOnNativeChain: 0,
-        },
+  const [allianceAssets, setAllianceAssets] = useState<AllianceAssets>({
+    0: {
+      name: "WHALELSD",
+      inputValues: {
+        lsdApr: 0.16,
+        assetPrice: 0.015,
+        allianceRewardWeight: 0.001,
+        annualizedTakeRate: 0.16,
+        principalStakeOnNativeChain: 10000000,
       },
-    }
-    // { id: 1, label: "KUJILSD" },
-    // { id: 2, label: "OSMOLSD" },
-    // { id: 3, label: "OSMOLSD2" },
-  );
-  const [poolValues, setPoolValues] = useState<Record<string, number>>({});
-  const [poolTotalValueState, setPoolTotalValue] = useState<number>(0);
+    },
+  });
+
+  const poolTotalValue = useMemo(() => {
+    let allianceAssetValue = 0;
+    let nativeAssetValue = 0;
+    Object.values(allianceAssets).forEach((asset) => {
+      const inputValues = asset.inputValues;
+
+      allianceAssetValue +=
+        inputValues.principalStakeOnNativeChain *
+          inputValues.annualizedTakeRate *
+          inputValues.assetPrice +
+        inputValues.principalStakeOnNativeChain *
+          inputValues.annualizedTakeRate *
+          inputValues.lsdApr *
+          inputValues.assetPrice;
+    });
+
+    nativeAssetValue +=
+      nativeInputValues.principalStakeOnNativeChain *
+        nativeInputValues.annualizedTakeRate *
+        nativeInputValues.assetPrice +
+      nativeInputValues.principalStakeOnNativeChain *
+        nativeInputValues.annualizedTakeRate *
+        nativeInputValues.lsdApr *
+        nativeInputValues.assetPrice;
+
+    return allianceAssetValue + nativeAssetValue;
+  }, [
+    allianceAssets,
+    nativeInputValues.annualizedTakeRate,
+    nativeInputValues.assetPrice,
+    nativeInputValues.lsdApr,
+    nativeInputValues.principalStakeOnNativeChain,
+  ]);
 
   // handlers
-
   // native input update handler
   const handleNativeInputChange = (
     fieldName: keyof NativeInputValues,
@@ -107,24 +130,9 @@ export function InitAppState({ children }: { children: ReactNode }) {
     }
   };
 
-  function totalPoolValues() {
-    let totalPoolValues = 0;
-    Object.keys(poolValues).forEach((key) => {
-      totalPoolValues += poolValues[key];
-    });
-    setPoolTotalValue(totalPoolValues);
-  }
-
-  function updatePoolTotalValue(asset: string, value: number) {
-    setPoolValues((cur) => ({ ...cur, [asset]: value }));
-    totalPoolValues();
-  }
-
   function addAllianceAsset(asset: string) {
     const newAsset = {
-      inflationRate: 0,
       lsdApr: 0,
-      totalTokenSupply: 0,
       assetPrice: 0,
       allianceRewardWeight: 0,
       annualizedTakeRate: 0,
@@ -132,7 +140,7 @@ export function InitAppState({ children }: { children: ReactNode }) {
     };
 
     setAllianceAssets((cur) => {
-      const newId = Object.keys(cur).length;
+      const newId = Date.now().valueOf();
       return {
         ...cur,
         [newId]: {
@@ -158,8 +166,7 @@ export function InitAppState({ children }: { children: ReactNode }) {
         allianceAssets,
         addAllianceAsset,
         removeAllianceAsset,
-        poolTotalValueState,
-        updatePoolTotalValue,
+        poolTotalValue,
         nativeInputValues,
         handleNativeInputChange,
         handleAllianceInputChange,

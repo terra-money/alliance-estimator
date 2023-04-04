@@ -18,60 +18,113 @@ function AllianceAssetColumn({
   label: string;
   userInputValues: AllianceInputValues;
 }) {
-  const { removeAllianceAsset, allianceAssets, nativeInputValues } =
-    useAppState();
+  const {
+    removeAllianceAsset,
+    allianceAssets,
+    nativeInputValues,
+    poolTotalValue,
+  } = useAppState();
+
+  const inputValues = allianceAssets[id].inputValues;
 
   // global values
-  const rewardPoolPercentage = 0.01;
   const takeRateInterval = 5;
-  const takeRate = 0.0000174331; // Some crazy complicated formula
-  const percentageMakeupOfRewardPoolValue = 0.5;
 
   // derived values
-  const rewardPoolMakeup = useMemo(() => {
+  // reward pool Percentage
+  const rewardPoolPercentage = useMemo(() => {
     let sum = 0;
 
-    if (!allianceAssets[id]) return 0;
-    let thisSum = allianceAssets[id].inputValues.allianceRewardWeight;
+    let thisSum = inputValues.allianceRewardWeight;
     Object.values(allianceAssets).forEach((asset) => {
       sum += parseInt(asset.inputValues.allianceRewardWeight);
     });
     sum += nativeInputValues.allianceRewardWeight;
 
-    console.log(
-      "reward pool has updated",
-      id,
-      allianceAssets[id].inputValues.allianceRewardWeight,
-      sum
-    );
-
     return thisSum / sum;
-  }, [allianceAssets, id, nativeInputValues.allianceRewardWeight]);
+  }, [
+    allianceAssets,
+    inputValues.allianceRewardWeight,
+    nativeInputValues.allianceRewardWeight,
+  ]);
 
-  const valueOfDenomInRewardPoolExcludingLSD = useMemo(
-    () => userInputValues.lsdApr * 10,
-    [userInputValues.lsdApr]
-  );
-  const valueOfDenomInRewardPoolIncludingLSD = useMemo(
-    () => userInputValues.lsdApr * 10,
-    [userInputValues.lsdApr]
-  );
-  const principalStakeExcludingRewards = useMemo(
-    () => userInputValues.lsdApr * 10,
-    [userInputValues.lsdApr]
-  );
-  const principalStakeIncludingLSD = useMemo(
-    () => userInputValues.lsdApr * 10,
-    [userInputValues.lsdApr]
-  );
-  const stakingRewardValue = useMemo(
-    () => userInputValues.lsdApr * 10,
-    [userInputValues.lsdApr]
-  );
-  const stakingAPR = useMemo(
-    () => userInputValues.lsdApr * 10,
-    [userInputValues.lsdApr]
-  );
+  // take rate
+  const takeRate = useMemo(() => {
+    return (
+      1 -
+      Math.exp(
+        Math.log(inputValues.annualizedTakeRate) / (525600 / takeRateInterval)
+      )
+    );
+  }, [inputValues.annualizedTakeRate]);
+
+  // reward pool makeup
+  const rewardPoolMakeup = useMemo(() => {
+    return (
+      inputValues.principalStakeOnNativeChain * inputValues.annualizedTakeRate
+    );
+  }, [inputValues.annualizedTakeRate, inputValues.principalStakeOnNativeChain]);
+
+  // value of denom in reward pool excluding LSD
+  const valueOfDenomInRewardPoolExcludingLSD = useMemo(() => {
+    return rewardPoolMakeup * inputValues.assetPrice;
+  }, [inputValues.assetPrice, rewardPoolMakeup]);
+
+  // value of denom in reward pool including LSD
+  const valueOfDenomInRewardPoolIncludingLSD = useMemo(() => {
+    return (
+      valueOfDenomInRewardPoolExcludingLSD +
+      rewardPoolMakeup * inputValues.lsdApr * inputValues.assetPrice
+    );
+  }, [
+    inputValues.assetPrice,
+    inputValues.lsdApr,
+    rewardPoolMakeup,
+    valueOfDenomInRewardPoolExcludingLSD,
+  ]);
+
+  // % makeup of reward pool value
+  const percentageMakeupOfRewardPoolValue = useMemo(() => {
+    return valueOfDenomInRewardPoolIncludingLSD / poolTotalValue;
+  }, [poolTotalValue, valueOfDenomInRewardPoolIncludingLSD]);
+
+  // principal stake excluding rewards
+  const principalStakeExcludingRewards = useMemo(() => {
+    return inputValues.principalStakeOnNativeChain - rewardPoolMakeup;
+  }, [inputValues.principalStakeOnNativeChain, rewardPoolMakeup]);
+
+  // principal stake including LSD
+  const principalStakeIncludingLSD = useMemo(() => {
+    return (
+      principalStakeExcludingRewards *
+      inputValues.assetPrice *
+      (1 + inputValues.lsdApr)
+    );
+  }, [
+    inputValues.assetPrice,
+    inputValues.lsdApr,
+    principalStakeExcludingRewards,
+  ]);
+
+  // staking reward value
+  const stakingRewardValue = useMemo(() => {
+    return poolTotalValue * rewardPoolPercentage;
+  }, [poolTotalValue, rewardPoolPercentage]);
+
+  // staking APR
+  const stakingAPR = useMemo(() => {
+    return (
+      (principalStakeIncludingLSD +
+        stakingRewardValue -
+        inputValues.principalStakeOnNativeChain * inputValues.assetPrice) /
+      (inputValues.principalStakeOnNativeChain * inputValues.assetPrice)
+    );
+  }, [
+    inputValues.assetPrice,
+    inputValues.principalStakeOnNativeChain,
+    principalStakeIncludingLSD,
+    stakingRewardValue,
+  ]);
 
   // create map to lookup derived values later
   const derivedValues: AllianceCalculatedValues = {
@@ -91,8 +144,6 @@ function AllianceAssetColumn({
   function handleRemoveAsset() {
     removeAllianceAsset(id);
   }
-
-  console.log({ rewardPoolMakeup });
 
   // render table for individual token
   return (

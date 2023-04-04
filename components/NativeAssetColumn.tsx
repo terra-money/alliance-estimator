@@ -14,7 +14,7 @@ function NativeAssetColumn({
 }: {
   userInputValues: NativeInputValues;
 }) {
-  const { poolTotalValueState } = useAppState();
+  const { poolTotalValue } = useAppState();
 
   // cache derived values
   const rewardPoolOnNativeChain = useMemo(
@@ -44,11 +44,6 @@ function NativeAssetColumn({
       userInputValues.assetPrice,
       userInputValues.lsdApr,
     ]
-  );
-
-  const poolTotalValue = useMemo(
-    () => poolTotalValueState,
-    [poolTotalValueState]
   );
 
   const percentageMakeupOfRewardPoolValue = useMemo(

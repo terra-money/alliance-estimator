@@ -1,7 +1,5 @@
 export interface AllianceInputValues {
-  inflationRate: number;
   lsdApr: number;
-  totalTokenSupply: number;
   assetPrice: number;
   allianceRewardWeight: number;
   annualizedTakeRate: number;

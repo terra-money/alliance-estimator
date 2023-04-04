@@ -30,7 +30,6 @@ const Card = ({
   derivedValues: CalculatedValues;
   index: number;
 }) => {
-  console.log("card rendered", section, type, assetId, derivedValues);
   const { handleNativeInputChange, handleAllianceInputChange } = useAppState();
   const fields = type === "native" ? nativeFieldMap : allianceFieldMap;
 
