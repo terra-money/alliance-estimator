@@ -1,12 +1,14 @@
 import { useMemo, useState } from "react";
+import Image from 'next/image';
 import {
   allianceFieldMap,
   AllianceCalculatedValues,
   AllianceInputValues,
 } from "@/data";
 import { useAppState } from "@/contexts";
-import styles from "@/styles/AllianceAssetColumn.module.css";
+import styles from "@/styles/AllianceAssetColumn.module.scss";
 import Card from "./Card";
+import ActionButtons from './ActionButtons';
 
 function AllianceAssetColumn({
   id,
@@ -176,12 +178,28 @@ function AllianceAssetColumn({
   return (
     <div className={styles.container}>
       <div className={styles.assetHeader}>
-        <h2 className={styles.assetName}>{label}</h2>
-        <div className={styles.columnActions}>
-          <button onClick={expandAll}>Expand All</button>
-          <button onClick={collapseAll}>Collapse All</button>
-          <button onClick={handleRemoveAsset}>Remove Asset</button>
+        <div className={styles.leftSide}>
+          <h2 className={styles.assetName}>{label}</h2>
+          <Image
+            className={styles.icon}
+            src="/Icons/Pencil.svg"
+            alt="Edit Asset Name"
+            width={20}
+            height={20}
+          />
+          <Image
+            className={styles.icon}
+            src="/Icons/Trash.svg"
+            alt="Edit Asset Name"
+            width={20}
+            height={20}
+            onClick={handleRemoveAsset}
+          />
         </div>
+        <ActionButtons
+          expandAll={expandAll}
+          collapseAll={collapseAll}
+        />
       </div>
       {Object.keys(allianceFieldMap).map((section, i) => {
         return (

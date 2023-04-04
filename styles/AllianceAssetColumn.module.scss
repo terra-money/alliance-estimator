@@ -1,6 +1,5 @@
 
 .container {
-  /* padding: 1rem */
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -10,12 +9,17 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: .5rem;
-}
+  padding: .5rem 0;
 
-.columnActions {
-  display: flex;
-  gap: 8px;
+  .leftSide {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .icon {
+      cursor: pointer;
+    }
+  }
 }
 
 .assetName {

@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import Image from 'next/image';
 import {
   nativeFieldMap,
   NativeFieldKey,
@@ -6,8 +7,9 @@ import {
   NativeInputValues,
 } from "@/data";
 import { useAppState } from "@/contexts";
-import styles from "@/styles/NativeAssetColumn.module.css";
+import styles from "@/styles/NativeAssetColumn.module.scss";
 import Card from "./Card";
+import ActionButtons from './ActionButtons';
 
 function NativeAssetColumn({
   userInputValues,
@@ -138,11 +140,22 @@ function NativeAssetColumn({
   return (
     <div className={styles.container}>
       <div className={styles.assetHeader}>
-        <h2 className={styles.assetName}>LUNA</h2>
-        <div className={styles.columnActions}>
-          <button onClick={expandAll}>Expand All</button>
-          <button onClick={collapseAll}>Collapse All</button>
+        <div className={styles.leftSide}>
+          <h2 className={styles.assetName}>
+            LUNA
+          </h2>
+          <Image
+            className={styles.icon}
+            src="/Icons/Pencil.svg"
+            alt="Edit Asset Name"
+            width={20}
+            height={20}
+          />
         </div>
+        <ActionButtons
+          expandAll={expandAll}
+          collapseAll={collapseAll}
+        />
       </div>
       {Object.keys(nativeFieldMap).map((section, i) => {
         return (

@@ -33,6 +33,7 @@
 
     .icon {
       width: 30px;
+      transform: rotate(180deg);
       transition: transform 0.3s;
     }
 
@@ -116,7 +117,7 @@
     }
 
     .icon {
-      transform: rotate(180deg);
+      transform: rotate(0deg);
     }
   }
 }

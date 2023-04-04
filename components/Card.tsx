@@ -32,7 +32,6 @@ const Card = ({
   toggleExpansion: (index: number) => void;
   expanded: boolean;
 }) => {
-  const [cardIsOpen, setCardIsOpen] = useState(false);
   const { handleNativeInputChange, handleAllianceInputChange } = useAppState();
   const fields = type === "native" ? nativeFieldMap : allianceFieldMap;
 
@@ -59,24 +58,24 @@ const Card = ({
   useEffect(() => {
     const content = document.getElementById(`content-${type === 'native' ? "" : assetId}-${index}`);
     if (content) {
-      content.style.maxHeight = cardIsOpen ? `${content.scrollHeight + 24}px` : "0px";
+      content.style.maxHeight = expanded ? `${content.scrollHeight + 24}px` : "0px";
     }
-  }, [assetId, cardIsOpen, index, type])
+  }, [assetId, expanded, index, type])
 
   return (
     <div className={cardStyles.fieldSection}>
       <section
-        className={`${cardStyles.accordion} ${cardIsOpen ? cardStyles.opened : ""}`}
+        className={`${cardStyles.accordion} ${expanded ? cardStyles.opened : ""}`}
         key={`accordion-${section}`}
       >
         <div
           className={cardStyles.top}
-          onClick={() => setCardIsOpen(!cardIsOpen)}
+          onClick={handleHeaderClick}
         >
           <h5 className={cardStyles.title}>{section}</h5>
           <Image
             className={cardStyles.icon}
-            src="/Icon.svg"
+            src="/Icons/Chevron.svg"
             alt="icon"
             width={24}
             height={24}
