@@ -15,7 +15,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 5px solid red
 }
 
 .addColumn button {
