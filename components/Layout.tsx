@@ -1,9 +1,19 @@
+import { useRef } from "react";
 import { NativeAssetColumn, AllianceAssetColumn } from "@/components";
 import { useAppState } from "@/contexts";
 import styles from "@/styles/Layout.module.css";
 
 function Layout() {
   const { allianceAssets, addAllianceAsset, nativeInputValues } = useAppState();
+  const endOfPageRef = useRef<HTMLDivElement | null>(null);
+  function handleScroll() {
+    setTimeout(() => {
+      endOfPageRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+    }, 100);
+  }
 
   return (
     <>
@@ -28,10 +38,11 @@ function Layout() {
             </div>
           );
         })}
-        <div className={styles.addColumn}>
+        <div ref={endOfPageRef} className={styles.addColumn}>
           <button
             onClick={() => {
               addAllianceAsset("New Asset");
+              handleScroll();
             }}
           >
             Add Alliance Asset

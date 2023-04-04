@@ -29,7 +29,6 @@ function NativeAssetColumn({
 
     let nativeWeight = userInputValues.allianceRewardWeight;
     Object.values(allianceAssets).forEach((asset) => {
-      console.log(asset.inputValues.allianceRewardWeight);
       allianceTotalWeight += asset.inputValues.allianceRewardWeight;
     });
 
