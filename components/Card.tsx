@@ -19,6 +19,8 @@ const Card = ({
   derivedValues,
   assetId,
   index,
+  toggleExpansion,
+  expanded,
 }: {
   assetId?: number;
   section: string;
@@ -26,13 +28,14 @@ const Card = ({
   userInputValues: InputValues;
   derivedValues: CalculatedValues;
   index: number;
+  toggleExpansion: (index: number) => void;
+  expanded: boolean;
 }) => {
   const { handleNativeInputChange, handleAllianceInputChange } = useAppState();
   const fields = type === "native" ? nativeFieldMap : allianceFieldMap;
-  const [expanded, setExpanded] = useState(index === 0 ? true : false);
 
   function handleHeaderClick() {
-    setExpanded(!expanded);
+    toggleExpansion(index);
   }
 
   function handleInputUpdate(e: React.ChangeEvent<HTMLInputElement>) {

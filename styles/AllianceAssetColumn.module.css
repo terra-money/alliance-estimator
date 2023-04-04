@@ -13,6 +13,11 @@
   padding: .5rem;
 }
 
+.columnActions {
+  display: flex;
+  gap: 8px;
+}
+
 .assetName {
   text-decoration: underline;
 }
