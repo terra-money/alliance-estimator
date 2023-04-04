@@ -1,11 +1,7 @@
 import {
   nativeFieldMap,
-  NativeFieldKey,
-  NativeCalculatedValues,
   NativeInputValues,
   allianceFieldMap,
-  AllianceFieldKey,
-  AllianceCalculatedValues,
   AllianceInputValues,
   InputValues,
   CalculatedValues,
@@ -35,7 +31,6 @@ const Card = ({
 
   function handleInputUpdate(e: React.ChangeEvent<HTMLInputElement>) {
     if (type === "native") {
-      console.log("native triggered", e.target.name, e.target.value);
       handleNativeInputChange(
         e.target.name as keyof NativeInputValues,
         e.target.value
