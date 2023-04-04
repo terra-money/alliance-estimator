@@ -8,6 +8,9 @@ import {
   CalculatedValues,
   isInputField,
   isDerivedField,
+  allianceFields,
+  NativeField,
+  AllianceField,
 } from "@/data";
 import { useAppState } from "@/contexts";
 import cardStyles from "../styles/Card.module.scss";
@@ -34,6 +37,18 @@ const Card = ({
   const { handleNativeInputChange, handleAllianceInputChange } = useAppState();
   const fields = type === "native" ? nativeFieldMap : allianceFieldMap;
 
+  function formatValue(
+    value: string | number,
+    field: AllianceField | NativeField
+  ): string {
+    if (field.format) {
+      return field.format(+value);
+    }
+    // if (formatFn !== undefined) return formatFn(+value);
+    if (typeof value === "string") return value;
+    return value.toLocaleString();
+  }
+
   function handleHeaderClick() {
     toggleExpansion(index);
   }
@@ -42,14 +57,15 @@ const Card = ({
     if (type === "native") {
       handleNativeInputChange(
         e.target.name as keyof NativeInputValues,
-        e.target.value
+        e.target.value.replace(/,/g, "")
       );
     } else {
       if (assetId === undefined) return;
+
       handleAllianceInputChange(
         assetId,
         e.target.name as keyof AllianceInputValues,
-        e.target.value
+        e.target.value.replace(/,/g, "")
       );
     }
   }
@@ -79,11 +95,12 @@ const Card = ({
             <div className={cardStyles.fieldValue}>
               {field.input ? (
                 <input
+                  autoComplete="off"
                   type="text"
                   name={field.name}
                   value={
                     isInputField(field.name, userInputValues)
-                      ? userInputValues[field.name]
+                      ? userInputValues[field.name].toLocaleString()
                       : ""
                   }
                   onChange={handleInputUpdate}
@@ -92,7 +109,7 @@ const Card = ({
               ) : (
                 <div className={cardStyles.textValue}>
                   {isDerivedField(field.name, derivedValues)
-                    ? Number(derivedValues[field.name]).toFixed(2)
+                    ? formatValue(derivedValues[field.name], field)
                     : ""}
                 </div>
               )}
