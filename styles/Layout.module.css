@@ -6,5 +6,20 @@
 .assetColumn {
   margin: 1rem 0 0 1rem;
   max-width: 600px;
-  border: 1px solid black;
+}
+
+.addColumn {
+  margin: 0 1rem;
+  flex-shrink: 0;
+  flex-basis: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.addColumn button {
+  padding: 1rem;
+  border-radius: 50%;
+  width: 300px;
+  height: 300px;
 }

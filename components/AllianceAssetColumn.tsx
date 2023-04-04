@@ -1,7 +1,6 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   allianceFieldMap,
-  AllianceFieldKey,
   AllianceCalculatedValues,
   AllianceInputValues,
 } from "@/data";
@@ -26,6 +25,34 @@ function AllianceAssetColumn({
   } = useAppState();
 
   const inputValues = allianceAssets[id].inputValues;
+
+  const [cardExpansions, setCardExpansions] = useState<Record<string, boolean>>(
+    Object.keys(allianceFieldMap).reduce(
+      (acc, _, i) => ({ ...acc, [i]: true }),
+      {}
+    )
+  );
+
+  function toggleExpansion(index: number) {
+    const newCardState = { [index]: !cardExpansions[index] };
+    setCardExpansions({ ...cardExpansions, ...newCardState });
+  }
+
+  function expandAll() {
+    const newCardState = Object.keys(cardExpansions).reduce(
+      (acc, curr) => ({ ...acc, [curr]: true }),
+      {}
+    );
+    setCardExpansions(newCardState);
+  }
+
+  function collapseAll() {
+    const newCardState = Object.keys(cardExpansions).reduce(
+      (acc, curr) => ({ ...acc, [curr]: false }),
+      {}
+    );
+    setCardExpansions(newCardState);
+  }
 
   // global values
   const takeRateInterval = 5;
@@ -150,13 +177,17 @@ function AllianceAssetColumn({
     <div className={styles.container}>
       <div className={styles.assetHeader}>
         <h2 className={styles.assetName}>{label}</h2>
-        <div className={styles.removeButton}>
+        <div className={styles.columnActions}>
+          <button onClick={expandAll}>Expand All</button>
+          <button onClick={collapseAll}>Collapse All</button>
           <button onClick={handleRemoveAsset}>Remove Asset</button>
         </div>
       </div>
       {Object.keys(allianceFieldMap).map((section, i) => {
         return (
           <Card
+            toggleExpansion={toggleExpansion}
+            expanded={cardExpansions[i]}
             key={`section-${section}`}
             assetId={id}
             index={i}

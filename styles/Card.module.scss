@@ -6,12 +6,11 @@
 }
 
 .fieldSectionHeader {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
   padding: 16px 20px;
   background-color: #21212C;
-  border-bottom: 1px solid #393939;
-  border-top-right-radius: 8px;
-  border-top-left-radius: 8px;
-
   font-size: 20px;
   font-weight: 500;
   line-height: 120%;
@@ -20,9 +19,22 @@
 
 .inputs {
   padding: 12px 20px;
-  display: flex;
+  display: none;
+  overflow: hidden;
   flex-direction: column;
   gap: 20px;
+}
+
+.expanded {
+  .inputs {
+    display: flex;
+    overflow: inherit;
+  }
+  .fieldSectionHeader {
+    border-bottom: 1px solid #393939;
+  border-top-right-radius: 8px;
+  border-top-left-radius: 8px;
+  }
 }
 
 .fieldRow {
