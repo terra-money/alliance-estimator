@@ -83,7 +83,7 @@ export const allianceFields: AllianceField[] = [
     secondaryLabel: "Module Parameter",
     input: false,
     name: "takeRate",
-    format: (value) => value.toPrecision(11),
+    format: (value) => value.toPrecision(9),
   },
   {
     group: "Reward Pool",
