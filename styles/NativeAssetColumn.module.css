@@ -3,7 +3,7 @@
   /* padding: 1rem */
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 1rem;
 }
 
 .assetHeader {

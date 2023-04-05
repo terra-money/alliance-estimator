@@ -26,3 +26,14 @@ export function isDerivedField(
 ): key is keyof CalculatedValues {
   return key in derivedValues;
 }
+
+export function currencyFormat(value: number, currency: string = "USD") {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency,
+  }).format(value);
+}
+
+export function percentFormat(value: number) {
+  return (value * 100).toFixed(4) + " %";
+}

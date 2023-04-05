@@ -1,11 +1,12 @@
+import { currencyFormat } from "./helpers";
+
 export interface NativeInputValues {
-  denom: string;
   inflationRate: number;
   lsdApr: number;
   totalTokenSupply: number;
   assetPrice: number;
   allianceRewardWeight: number;
-  principalStakeOnNativeChain: number;
+  assetStakedInAlliance: number;
 }
 
 export interface NativeCalculatedValues {
@@ -34,7 +35,8 @@ export interface NativeField {
   group: string;
   advanced?: boolean;
   format?: (value: number) => string;
-  parse?: (value: string) => string;
+  inputPrefix?: string;
+  inputSuffix?: string;
 }
 
 export type NativeFieldMap = {
@@ -47,6 +49,7 @@ export const nativeFields: NativeField[] = [
     name: "inflationRate",
     label: "Inflation Rate",
     input: true,
+    inputSuffix: "%",
   },
   {
     group: "Chain Data",
@@ -54,6 +57,7 @@ export const nativeFields: NativeField[] = [
     label: "Annual Estimated LSD Growth Rate",
     secondaryLabel: "Set to 0 if not an LSD",
     input: true,
+    inputSuffix: "%",
   },
   {
     group: "Chain Data",
@@ -69,15 +73,10 @@ export const nativeFields: NativeField[] = [
   },
   {
     group: "Chain Data",
-    name: "denom",
-    label: "Denom",
-    input: true,
-  },
-  {
-    group: "Chain Data",
     name: "assetPrice",
     label: "Asset Price",
     input: true,
+    inputPrefix: "$",
   },
   {
     group: "Alliance Asset Parameters",
@@ -94,8 +93,8 @@ export const nativeFields: NativeField[] = [
   },
   {
     group: "Reward Pool",
-    name: "principalStakeOnNativeChain",
-    label: "Principal stake on native chain",
+    name: "assetStakedInAlliance",
+    label: "Asset Staked in Alliance",
     input: true,
   },
   {
@@ -113,6 +112,7 @@ export const nativeFields: NativeField[] = [
     secondaryLabel: "Excluding LSD yield",
     input: false,
     advanced: true,
+    format: (value) => currencyFormat(value),
   },
   {
     group: "Reward Pool",
@@ -121,6 +121,7 @@ export const nativeFields: NativeField[] = [
     secondaryLabel: "After 1 year LSD yield",
     input: false,
     advanced: true,
+    format: (value) => currencyFormat(value),
   },
   {
     group: "Reward Pool",
@@ -135,11 +136,12 @@ export const nativeFields: NativeField[] = [
     name: "poolTotalValue",
     label: "(including LSD appreciation)",
     input: false,
+    format: (value) => currencyFormat(value),
   },
   {
     group: "Principal",
     name: "principalStakeExcludingRewards",
-    label: "Principal stake - after 1 year take rate",
+    label: "Principal stake amount after 1 year take rate",
     secondaryLabel: "Excluding Rewards",
     input: false,
     advanced: true,
@@ -147,10 +149,11 @@ export const nativeFields: NativeField[] = [
   {
     group: "Principal",
     name: "principalStakeIncludingLSD",
-    label: "Principal stake - after 1 year take rate",
+    label: "Principal stake value after 1 year take rate",
     secondaryLabel: "Including LSD yield",
     input: false,
     advanced: true,
+    format: (value) => currencyFormat(value),
   },
   {
     group: "Yield",
@@ -158,6 +161,7 @@ export const nativeFields: NativeField[] = [
     label: "Estimated staking reward value",
     secondaryLabel: "Including LSD yield",
     input: false,
+    format: (value) => currencyFormat(value),
   },
   {
     group: "Yield",

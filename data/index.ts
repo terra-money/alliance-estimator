@@ -21,6 +21,7 @@ export {
 export {
   isInputField,
   isDerivedField,
+  currencyFormat,
   type FieldKeys,
   type InputValues,
   type CalculatedValues,

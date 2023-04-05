@@ -1,7 +1,10 @@
 import { useRef } from "react";
+import Image from "next/image";
 import { NativeAssetColumn, AllianceAssetColumn } from "@/components";
 import { useAppState } from "@/contexts";
 import styles from "@/styles/Layout.module.css";
+import add_button from "@/styles/icons/add_button.svg";
+import { APP_TITLE } from "@/constants";
 
 function Layout() {
   const { allianceAssets, addAllianceAsset, nativeInputValues } = useAppState();
@@ -10,7 +13,6 @@ function Layout() {
     setTimeout(() => {
       endOfPageRef.current?.scrollIntoView({
         behavior: "smooth",
-        block: "nearest",
       });
     }, 100);
   }
@@ -18,7 +20,7 @@ function Layout() {
   return (
     <>
       <header>
-        <h1>Phoenix Validator Reward Estimator</h1>
+        <h1>{APP_TITLE}</h1>
       </header>
       <main className={styles.columnContainer}>
         <div className={styles.assetColumn}>
@@ -45,7 +47,7 @@ function Layout() {
               handleScroll();
             }}
           >
-            Add Alliance Asset
+            <Image src={add_button} alt="Add Asset" />
           </button>
         </div>
       </main>
