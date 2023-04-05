@@ -8,12 +8,12 @@ import {
   CalculatedValues,
   isInputField,
   isDerivedField,
-  allianceFields,
   NativeField,
   AllianceField,
 } from "@/data";
 import { useAppState } from "@/contexts";
 import cardStyles from "../styles/Card.module.scss";
+import Input from "./Input";
 
 const Card = ({
   section,
@@ -42,10 +42,9 @@ const Card = ({
     field: AllianceField | NativeField
   ): string {
     if (field.format) {
+      if (isNaN(+value)) return "--";
       return field.format(+value);
     }
-    // if (formatFn !== undefined) return formatFn(+value);
-    if (typeof value === "string") return value;
     return value.toLocaleString();
   }
 
@@ -57,15 +56,16 @@ const Card = ({
     if (type === "native") {
       handleNativeInputChange(
         e.target.name as keyof NativeInputValues,
-        e.target.value.replace(/,/g, "")
+        e.target.value.replace(/[,$]/g, "")
       );
     } else {
       if (assetId === undefined) return;
+      const value = e.target.value.replace(/[,$]/g, "");
 
       handleAllianceInputChange(
         assetId,
         e.target.name as keyof AllianceInputValues,
-        e.target.value.replace(/,/g, "")
+        value
       );
     }
   }
@@ -94,17 +94,14 @@ const Card = ({
             </div>
             <div className={cardStyles.fieldValue}>
               {field.input ? (
-                <input
-                  autoComplete="off"
-                  type="text"
-                  name={field.name}
+                <Input
+                  field={field}
                   value={
                     isInputField(field.name, userInputValues)
-                      ? userInputValues[field.name].toLocaleString()
+                      ? userInputValues[field.name]
                       : ""
                   }
                   onChange={handleInputUpdate}
-                  disabled={!field.input}
                 />
               ) : (
                 <div className={cardStyles.textValue}>

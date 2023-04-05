@@ -1,9 +1,11 @@
+import { currencyFormat, percentFormat } from "./helpers";
+
 export interface AllianceInputValues {
   lsdApr: number;
   assetPrice: number;
   allianceRewardWeight: number;
   annualizedTakeRate: number;
-  principalStakeOnNativeChain: number;
+  assetStakedInAlliance: number;
 }
 
 export interface AllianceCalculatedValues {
@@ -32,7 +34,8 @@ export interface AllianceField {
   group: string;
   advanced?: boolean;
   format?: (value: number) => string;
-  parse?: (value: string) => string;
+  inputPrefix?: string;
+  inputSuffix?: string;
 }
 
 export type AllianceFieldMap = Record<string, AllianceField[]>;
@@ -44,12 +47,14 @@ export const allianceFields: AllianceField[] = [
     label: "Annual Estimated LSD Growth Rate",
     secondaryLabel: "Set to 0 if not an LSD",
     input: true,
+    inputSuffix: "%",
   },
   {
     group: "Chain Data",
     name: "assetPrice",
     label: "Asset Price",
     input: true,
+    inputPrefix: "$",
   },
   {
     group: "Alliance Asset Parameters",
@@ -69,6 +74,7 @@ export const allianceFields: AllianceField[] = [
     label: "Annualized Take Rate (for LSDs)",
     input: true,
     name: "annualizedTakeRate",
+    inputSuffix: "%",
   },
   {
     group: "Alliance Asset Parameters",
@@ -87,8 +93,8 @@ export const allianceFields: AllianceField[] = [
   },
   {
     group: "Reward Pool",
-    name: "principalStakeOnNativeChain",
-    label: "Principal stake on Native chain",
+    name: "assetStakedInAlliance",
+    label: "Asset Staked in Alliance",
     input: true,
   },
   {
@@ -106,6 +112,7 @@ export const allianceFields: AllianceField[] = [
     secondaryLabel: "Excluding LSD yield",
     input: false,
     advanced: true,
+    format: (value) => currencyFormat(value),
   },
   {
     group: "Reward Pool",
@@ -113,6 +120,7 @@ export const allianceFields: AllianceField[] = [
     label: "Value of denom in reward pool after 1 yr LSD yield",
     input: false,
     advanced: true,
+    format: (value) => currencyFormat(value),
   },
   {
     group: "Reward Pool",
@@ -137,6 +145,7 @@ export const allianceFields: AllianceField[] = [
     secondaryLabel: "Including LSD yield",
     input: false,
     advanced: true,
+    format: (value) => currencyFormat(value),
   },
   {
     group: "Yield",
@@ -144,6 +153,7 @@ export const allianceFields: AllianceField[] = [
     label: "Staking reward value",
     secondaryLabel: "Including LSD yield",
     input: false,
+    format: (value) => currencyFormat(value),
   },
   {
     group: "Yield",

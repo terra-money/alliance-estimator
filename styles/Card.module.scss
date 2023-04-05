@@ -2,7 +2,7 @@
   background-color: #1A1A23;
   border: 1px solid #393939;
   border-radius: 8px;
-  width: 600px;
+  width: 400px;
 }
 
 .fieldSectionHeader {
@@ -11,7 +11,7 @@
   justify-content: space-between;
   padding: 16px 20px;
   background-color: #21212C;
-  font-size: 20px;
+  font-size: 14px;
   font-weight: 500;
   line-height: 120%;
   color: #FFFFFF;
@@ -22,7 +22,7 @@
   display: none;
   overflow: hidden;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
 .expanded {
@@ -32,8 +32,8 @@
   }
   .fieldSectionHeader {
     border-bottom: 1px solid #393939;
-  border-top-right-radius: 8px;
-  border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-top-left-radius: 8px;
   }
 }
 
@@ -48,15 +48,16 @@
   flex-direction: column;
   justify-content: center;
 }
+
 .fieldLabel {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 500;
   line-height: 120%;
   color: #E8E8E8;
 }
 
 .secondaryLabel {
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 400;
   line-height: 120%;
   color: #8A8AA0;
@@ -64,22 +65,14 @@
 
 .fieldValue {
   width: 200px;
-
-  input {
-    padding: 8px 12px;
-    background-color: #1F1F2C;
-    border: 1px solid #393939;
-    border-radius: 4px;
-    font-size: 16px;
-    font-weight: 500;
-    line-height: 120%;
-    color: #FFFFFF;
-    font-family: "Gotham";
-    width: inherit;
-  }
+  padding-left: 1rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 
   .textValue {
-    font-size: 20px;
+    text-align: right;
+    font-size: 14px;
     font-weight: 500;
     line-height: 120%;
     color: #FFFFFF;
