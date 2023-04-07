@@ -1,78 +1,77 @@
-import { useState, useEffect, useMemo } from "react"
+import { useState, useMemo } from "react";
 import {
   nativeFieldMap,
-  NativeFieldKey,
   NativeCalculatedValues,
   NativeInputValues,
-} from "@/data"
-import { useAppState } from "@/contexts"
-import styles from "@/styles/NativeAssetColumn.module.css"
-import Card from "./Card"
+} from "data";
+import { useAppState } from "contexts";
+import styles from "styles/NativeAssetColumn.module.css";
+import Card from "./Card";
 
 function NativeAssetColumn({
   userInputValues,
 }: {
-  userInputValues: NativeInputValues
+  userInputValues: NativeInputValues;
 }) {
-  const { poolTotalValue: poolTotal, allianceAssets } = useAppState()
+  const { poolTotalValue: poolTotal, allianceAssets } = useAppState();
   const [cardExpansions, setCardExpansions] = useState<Record<string, boolean>>(
     Object.keys(nativeFieldMap).reduce(
       (acc, _, i) => ({ ...acc, [i]: true }),
       {}
     )
-  )
+  );
 
   function toggleExpansion(index: number) {
-    const newCardState = { [index]: !cardExpansions[index] }
-    setCardExpansions({ ...cardExpansions, ...newCardState })
+    const newCardState = { [index]: !cardExpansions[index] };
+    setCardExpansions({ ...cardExpansions, ...newCardState });
   }
 
   function expandAll() {
     const newCardState = Object.keys(cardExpansions).reduce(
       (acc, curr) => ({ ...acc, [curr]: true }),
       {}
-    )
-    setCardExpansions(newCardState)
+    );
+    setCardExpansions(newCardState);
   }
 
   function collapseAll() {
     const newCardState = Object.keys(cardExpansions).reduce(
       (acc, curr) => ({ ...acc, [curr]: false }),
       {}
-    )
-    setCardExpansions(newCardState)
+    );
+    setCardExpansions(newCardState);
   }
 
-  const poolTotalValue = useMemo(() => poolTotal, [poolTotal])
+  const poolTotalValue = useMemo(() => poolTotal, [poolTotal]);
 
   // cache derived values
   const rewardPoolOnNativeChain = useMemo(
     () =>
       (userInputValues.inflationRate / 100) * userInputValues.totalTokenSupply,
     [userInputValues.inflationRate, userInputValues.totalTokenSupply]
-  )
+  );
 
   const rewardPoolPercentage = useMemo(() => {
-    let allianceTotalWeight = 0
+    let allianceTotalWeight = 0;
 
-    let nativeWeight = userInputValues.allianceRewardWeight
+    let nativeWeight = userInputValues.allianceRewardWeight;
 
     Object.values(allianceAssets).forEach((asset) => {
-      allianceTotalWeight += +asset.inputValues.allianceRewardWeight
-    })
+      allianceTotalWeight += +asset.inputValues.allianceRewardWeight;
+    });
 
-    return +nativeWeight / (+allianceTotalWeight + +nativeWeight)
-  }, [allianceAssets, userInputValues.allianceRewardWeight])
+    return +nativeWeight / (+allianceTotalWeight + +nativeWeight);
+  }, [allianceAssets, userInputValues.allianceRewardWeight]);
 
   const rewardPoolMakeup = useMemo(
     () =>
       userInputValues.totalTokenSupply * (userInputValues.inflationRate / 100),
     [userInputValues.totalTokenSupply, userInputValues.inflationRate]
-  )
+  );
   const valueOfDenomInRewardPoolExcludingLSD = useMemo(
     () => rewardPoolMakeup * userInputValues.assetPrice,
     [rewardPoolMakeup, userInputValues.assetPrice]
-  )
+  );
 
   const valueOfDenomInRewardPoolIncludingLSD = useMemo(
     () =>
@@ -84,27 +83,27 @@ function NativeAssetColumn({
       userInputValues.assetPrice,
       userInputValues.lsdApr,
     ]
-  )
+  );
 
   const percentageMakeupOfRewardPoolValue = useMemo(
     () => valueOfDenomInRewardPoolIncludingLSD / poolTotalValue,
     [poolTotalValue, valueOfDenomInRewardPoolIncludingLSD]
-  )
+  );
 
   const principalStakeExcludingRewards = useMemo(
     () => userInputValues.assetStakedInAlliance,
     [userInputValues.assetStakedInAlliance]
-  )
+  );
 
   const principalStakeIncludingLSD = useMemo(
     () => principalStakeExcludingRewards * userInputValues.assetPrice,
     [principalStakeExcludingRewards, userInputValues.assetPrice]
-  )
+  );
 
   const stakingRewardValue = useMemo(
     () => rewardPoolPercentage * poolTotalValue,
     [poolTotalValue, rewardPoolPercentage]
-  )
+  );
 
   const stakingAPR = useMemo(
     () =>
@@ -118,7 +117,7 @@ function NativeAssetColumn({
       stakingRewardValue,
       userInputValues.assetPrice,
     ]
-  )
+  );
 
   // map to lookup derived values later
   const derivedValues: NativeCalculatedValues = {
@@ -133,7 +132,7 @@ function NativeAssetColumn({
     principalStakeIncludingLSD,
     stakingRewardValue,
     stakingAPR,
-  }
+  };
 
   // render table for individual token
   return (
@@ -157,10 +156,10 @@ function NativeAssetColumn({
             userInputValues={userInputValues}
             derivedValues={derivedValues}
           />
-        )
+        );
       })}
     </div>
-  )
+  );
 }
 
-export default NativeAssetColumn
+export default NativeAssetColumn;

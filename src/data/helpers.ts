@@ -5,7 +5,7 @@ import {
   AllianceFieldKey,
   AllianceCalculatedValues,
   AllianceInputValues,
-} from "@/data";
+} from "data";
 
 export type InputValues = AllianceInputValues | NativeInputValues;
 export type CalculatedValues =
