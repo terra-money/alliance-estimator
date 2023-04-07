@@ -1,0 +1,43 @@
+name: publish
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    name: Publish to Cloudflare Pages
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: get Repository name
+        run: echo "PROJECT_NAME=${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build source code.
+        run: yarn build
+
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/pages-action@1
+        with:
+          accountId: 620ff29bbd515d2848f5306578bd1d1d
+          apiToken: ${{ secrets.CLOUDFLARE_PAGES_TOKEN }}
+          projectName: ${{ env.PROJECT_NAME }}
+          directory: build
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
