@@ -1,4 +1,4 @@
-import { NativeField, AllianceField } from "@/data";
+import { NativeField, AllianceField } from "data";
 import inputStyles from "../styles/Input.module.scss";
 
 function Input({

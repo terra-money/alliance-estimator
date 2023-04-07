@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   nativeFieldMap,
   NativeInputValues,
@@ -10,8 +9,8 @@ import {
   isDerivedField,
   NativeField,
   AllianceField,
-} from "@/data";
-import { useAppState } from "@/contexts";
+} from "data";
+import { useAppState } from "contexts";
 import cardStyles from "../styles/Card.module.scss";
 import Input from "./Input";
 

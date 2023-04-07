@@ -1,10 +1,9 @@
 import { useRef } from "react";
-import Image from "next/image";
-import { NativeAssetColumn, AllianceAssetColumn } from "@/components";
-import { useAppState } from "@/contexts";
-import styles from "@/styles/Layout.module.css";
-import add_button from "@/styles/icons/add_button.svg";
-import { APP_TITLE } from "@/constants";
+import { NativeAssetColumn, AllianceAssetColumn } from "components";
+import { useAppState } from "contexts";
+import styles from "styles/Layout.module.css";
+import add_button from "styles/icons/add_button.svg";
+import { APP_TITLE } from "../constants";
 
 function Layout() {
   const { allianceAssets, addAllianceAsset, nativeInputValues } = useAppState();
@@ -47,7 +46,7 @@ function Layout() {
               handleScroll();
             }}
           >
-            <Image src={add_button} alt="Add Asset" />
+            <img src={add_button} alt="Add Asset" />
           </button>
         </div>
       </main>

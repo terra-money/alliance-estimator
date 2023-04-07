@@ -1,4 +1,4 @@
-import { currencyFormat, percentFormat } from "./helpers";
+import { currencyFormat } from "./helpers";
 
 export interface AllianceInputValues {
   lsdApr: number;

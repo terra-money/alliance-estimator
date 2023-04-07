@@ -1,80 +1,80 @@
-import { useMemo, useState } from "react"
+import { useMemo, useState } from "react";
 import {
   allianceFieldMap,
   AllianceCalculatedValues,
   AllianceInputValues,
-} from "@/data"
-import { useAppState } from "@/contexts"
-import { TAKE_RATE_INTERVAL } from "@/constants"
-import styles from "@/styles/AllianceAssetColumn.module.css"
-import Card from "./Card"
+} from "data";
+import { useAppState } from "contexts";
+import { TAKE_RATE_INTERVAL } from "../constants";
+import styles from "styles/AllianceAssetColumn.module.css";
+import Card from "./Card";
 
 function AllianceAssetColumn({
   id,
   label,
   userInputValues,
 }: {
-  id: number
-  label: string
-  userInputValues: AllianceInputValues
+  id: number;
+  label: string;
+  userInputValues: AllianceInputValues;
 }) {
   const {
     removeAllianceAsset,
     allianceAssets,
     nativeInputValues,
     poolTotalValue,
-  } = useAppState()
+  } = useAppState();
 
-  const inputValues = allianceAssets[id].inputValues
+  const inputValues = allianceAssets[id].inputValues;
 
   const [cardExpansions, setCardExpansions] = useState<Record<string, boolean>>(
     Object.keys(allianceFieldMap).reduce(
       (acc, _, i) => ({ ...acc, [i]: true }),
       {}
     )
-  )
+  );
 
   function toggleExpansion(index: number) {
-    const newCardState = { [index]: !cardExpansions[index] }
-    setCardExpansions({ ...cardExpansions, ...newCardState })
+    const newCardState = { [index]: !cardExpansions[index] };
+    setCardExpansions({ ...cardExpansions, ...newCardState });
   }
 
   function expandAll() {
     const newCardState = Object.keys(cardExpansions).reduce(
       (acc, curr) => ({ ...acc, [curr]: true }),
       {}
-    )
-    setCardExpansions(newCardState)
+    );
+    setCardExpansions(newCardState);
   }
 
   function collapseAll() {
     const newCardState = Object.keys(cardExpansions).reduce(
       (acc, curr) => ({ ...acc, [curr]: false }),
       {}
-    )
-    setCardExpansions(newCardState)
+    );
+    setCardExpansions(newCardState);
   }
 
   // global values
-  const takeRateInterval = TAKE_RATE_INTERVAL
+  const takeRateInterval = TAKE_RATE_INTERVAL;
 
   // derived values
   // reward pool Percentage
   const rewardPoolPercentage = useMemo(() => {
-    let sum = 0
+    let sum = 0;
 
-    let thisSum = inputValues.allianceRewardWeight
+    let thisSum = inputValues.allianceRewardWeight;
     Object.values(allianceAssets).forEach((asset) => {
-      sum += +asset.inputValues.allianceRewardWeight
-    })
-    sum += +nativeInputValues.allianceRewardWeight
+      sum += +asset.inputValues.allianceRewardWeight;
+    });
+    sum += +nativeInputValues.allianceRewardWeight;
 
-    return +thisSum / +sum
+    return +thisSum / +sum;
   }, [
     allianceAssets,
     inputValues.allianceRewardWeight,
     nativeInputValues.allianceRewardWeight,
-  ])
+  ]);
 
   // take rate
   const takeRate = useMemo(() => {
@@ -84,43 +84,43 @@ function AllianceAssetColumn({
         Math.log(inputValues.annualizedTakeRate / 100) /
           (525600 / takeRateInterval)
       )
-    )
-  }, [inputValues.annualizedTakeRate, takeRateInterval])
+    );
+  }, [inputValues.annualizedTakeRate, takeRateInterval]);
 
   // reward pool makeup
   const rewardPoolMakeup = useMemo(() => {
     return (
       inputValues.assetStakedInAlliance * (inputValues.annualizedTakeRate / 100)
-    )
-  }, [inputValues.annualizedTakeRate, inputValues.assetStakedInAlliance])
+    );
+  }, [inputValues.annualizedTakeRate, inputValues.assetStakedInAlliance]);
 
   // value of denom in reward pool excluding LSD
   const valueOfDenomInRewardPoolExcludingLSD = useMemo(() => {
-    return rewardPoolMakeup * inputValues.assetPrice
-  }, [inputValues.assetPrice, rewardPoolMakeup])
+    return rewardPoolMakeup * inputValues.assetPrice;
+  }, [inputValues.assetPrice, rewardPoolMakeup]);
 
   // value of denom in reward pool including LSD
   const valueOfDenomInRewardPoolIncludingLSD = useMemo(() => {
     return (
       valueOfDenomInRewardPoolExcludingLSD +
       rewardPoolMakeup * (inputValues.lsdApr / 100) * inputValues.assetPrice
-    )
+    );
   }, [
     inputValues.assetPrice,
     inputValues.lsdApr,
     rewardPoolMakeup,
     valueOfDenomInRewardPoolExcludingLSD,
-  ])
+  ]);
 
   // % makeup of reward pool value
   const percentageMakeupOfRewardPoolValue = useMemo(() => {
-    return valueOfDenomInRewardPoolIncludingLSD / poolTotalValue
-  }, [poolTotalValue, valueOfDenomInRewardPoolIncludingLSD])
+    return valueOfDenomInRewardPoolIncludingLSD / poolTotalValue;
+  }, [poolTotalValue, valueOfDenomInRewardPoolIncludingLSD]);
 
   // principal stake excluding rewards
   const principalStakeExcludingRewards = useMemo(() => {
-    return inputValues.assetStakedInAlliance - rewardPoolMakeup
-  }, [inputValues.assetStakedInAlliance, rewardPoolMakeup])
+    return inputValues.assetStakedInAlliance - rewardPoolMakeup;
+  }, [inputValues.assetStakedInAlliance, rewardPoolMakeup]);
 
   // principal stake including LSD
   const principalStakeIncludingLSD = useMemo(() => {
@@ -128,17 +128,17 @@ function AllianceAssetColumn({
       principalStakeExcludingRewards *
       inputValues.assetPrice *
       (1 + inputValues.lsdApr / 100)
-    )
+    );
   }, [
     inputValues.assetPrice,
     inputValues.lsdApr,
     principalStakeExcludingRewards,
-  ])
+  ]);
 
   // staking reward value
   const stakingRewardValue = useMemo(() => {
-    return poolTotalValue * rewardPoolPercentage
-  }, [poolTotalValue, rewardPoolPercentage])
+    return poolTotalValue * rewardPoolPercentage;
+  }, [poolTotalValue, rewardPoolPercentage]);
 
   // staking APR
   const stakingAPR = useMemo(() => {
@@ -147,13 +147,13 @@ function AllianceAssetColumn({
         stakingRewardValue -
         inputValues.assetStakedInAlliance * inputValues.assetPrice) /
       (inputValues.assetStakedInAlliance * inputValues.assetPrice)
-    )
+    );
   }, [
     inputValues.assetPrice,
     inputValues.assetStakedInAlliance,
     principalStakeIncludingLSD,
     stakingRewardValue,
-  ])
+  ]);
 
   // create map to lookup derived values later
   const derivedValues: AllianceCalculatedValues = {
@@ -168,10 +168,10 @@ function AllianceAssetColumn({
     principalStakeIncludingLSD,
     stakingRewardValue,
     stakingAPR,
-  }
+  };
 
   function handleRemoveAsset() {
-    removeAllianceAsset(id)
+    removeAllianceAsset(id);
   }
 
   // render table for individual token
@@ -198,10 +198,10 @@ function AllianceAssetColumn({
             userInputValues={userInputValues}
             derivedValues={derivedValues}
           />
-        )
+        );
       })}
     </div>
-  )
+  );
 }
 
-export default AllianceAssetColumn
+export default AllianceAssetColumn;

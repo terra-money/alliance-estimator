@@ -1,39 +1,39 @@
-import { type ReactNode, useState, useMemo } from "react"
-import { createContext } from "@/utils"
-import { MOCK_DATA, USE_MOCK_DATA } from "@/constants"
+import { type ReactNode, useState, useMemo } from "react";
+import { createContext } from "utils";
+import { MOCK_DATA, USE_MOCK_DATA } from "../constants";
 import {
   type NativeInputValues,
   type AllianceInputValues,
   isInputField,
-} from "@/data"
+} from "data";
 
 type AllianceAssets = Record<
   number,
   {
-    name: string
-    inputValues: AllianceInputValues
+    name: string;
+    inputValues: AllianceInputValues;
   }
->
+>;
 
 export interface IAppState {
-  allianceAssets: AllianceAssets
-  addAllianceAsset: (asset: string) => void
-  removeAllianceAsset: (index: number) => void
-  poolTotalValue: number
-  nativeInputValues: NativeInputValues
+  allianceAssets: AllianceAssets;
+  addAllianceAsset: (asset: string) => void;
+  removeAllianceAsset: (index: number) => void;
+  poolTotalValue: number;
+  nativeInputValues: NativeInputValues;
   handleNativeInputChange: (
     fieldName: keyof NativeInputValues,
     value: string | number
-  ) => void
+  ) => void;
   handleAllianceInputChange: (
     fieldId: number,
     fieldName: keyof AllianceInputValues,
     value: string | number
-  ) => void
+  ) => void;
 }
 
 export const [useAppState, AppStateProvider] =
-  createContext<IAppState>("useAppState")
+  createContext<IAppState>("useAppState");
 
 export function InitAppState({ children }: { children: ReactNode }) {
   // state
@@ -46,17 +46,17 @@ export function InitAppState({ children }: { children: ReactNode }) {
       assetPrice: 1.3,
       allianceRewardWeight: 1,
     }
-  )
+  );
   const [allianceAssets, setAllianceAssets] = useState<AllianceAssets>(
     USE_MOCK_DATA && { ...MOCK_DATA }
-  )
+  );
 
   const poolTotalValue = useMemo(() => {
-    let allianceAssetValue = 0
-    let nativeAssetValue = 0
+    let allianceAssetValue = 0;
+    let nativeAssetValue = 0;
     Object.values(allianceAssets).forEach(
       (asset: { name: string; inputValues: AllianceInputValues }) => {
-        const inputValues = asset.inputValues
+        const inputValues = asset.inputValues;
         allianceAssetValue +=
           inputValues.assetStakedInAlliance *
             (inputValues.annualizedTakeRate / 100) *
@@ -64,9 +64,9 @@ export function InitAppState({ children }: { children: ReactNode }) {
           inputValues.assetStakedInAlliance *
             (inputValues.annualizedTakeRate / 100) *
             (inputValues.lsdApr / 100) *
-            inputValues.assetPrice
+            inputValues.assetPrice;
       }
-    )
+    );
 
     nativeAssetValue =
       nativeInputValues.totalTokenSupply *
@@ -75,15 +75,15 @@ export function InitAppState({ children }: { children: ReactNode }) {
       nativeInputValues.totalTokenSupply *
         (nativeInputValues.inflationRate / 100) *
         0 *
-        nativeInputValues.assetPrice
+        nativeInputValues.assetPrice;
 
-    return allianceAssetValue + nativeAssetValue
+    return allianceAssetValue + nativeAssetValue;
   }, [
     allianceAssets,
     nativeInputValues.assetPrice,
     nativeInputValues.inflationRate,
     nativeInputValues.totalTokenSupply,
-  ])
+  ]);
 
   // handlers
   // native input update handler
@@ -95,9 +95,9 @@ export function InitAppState({ children }: { children: ReactNode }) {
       setNativeInputValues({
         ...nativeInputValues,
         [fieldName]: value,
-      })
+      });
     }
-  }
+  };
 
   // alliance input handler
   const handleAllianceInputChange = (
@@ -115,9 +115,9 @@ export function InitAppState({ children }: { children: ReactNode }) {
             [fieldName]: value,
           },
         },
-      })
+      });
     }
-  }
+  };
 
   function addAllianceAsset(asset: string) {
     const newAsset: AllianceInputValues = {
@@ -126,25 +126,25 @@ export function InitAppState({ children }: { children: ReactNode }) {
       allianceRewardWeight: 0,
       annualizedTakeRate: 0,
       assetStakedInAlliance: 0,
-    }
+    };
 
     setAllianceAssets((cur) => {
-      const newId = Date.now().valueOf()
+      const newId = Date.now().valueOf();
       return {
         ...cur,
         [newId]: {
           name: asset,
           inputValues: newAsset,
         },
-      }
-    })
+      };
+    });
   }
 
   function removeAllianceAsset(id: number) {
-    if (!allianceAssets[id]) return
-    const newState = { ...allianceAssets }
-    delete newState[id]
-    setAllianceAssets(newState)
+    if (!allianceAssets[id]) return;
+    const newState = { ...allianceAssets };
+    delete newState[id];
+    setAllianceAssets(newState);
   }
 
   // render
@@ -163,7 +163,7 @@ export function InitAppState({ children }: { children: ReactNode }) {
     >
       {children}
     </AppStateProvider>
-  )
+  );
 }
 
-export default InitAppState
+export default InitAppState;
