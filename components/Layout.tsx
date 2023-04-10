@@ -4,7 +4,7 @@ import { useAppState } from "@/contexts";
 import styles from "@/styles/Layout.module.scss";
 
 function Layout() {
-  const { allianceAssets, addAllianceAsset, nativeInputValues } = useAppState();
+  const { allianceAssets, addAllianceAsset, nativeInputValues, setAllianceAssets, setNativeInputValues } = useAppState();
   const endOfPageRef = useRef<HTMLDivElement | null>(null);
   function handleScroll() {
     setTimeout(() => {
@@ -15,6 +15,16 @@ function Layout() {
     }, 100);
   }
 
+  const changeColumnTitle = (id: any, name: any) => {
+    setAllianceAssets({
+      ...allianceAssets,
+      [id]: {
+        name,
+        inputValues: allianceAssets[id].inputValues,
+      },
+    })
+  }
+
   return (
     <>
       <header className={styles.header}>
@@ -22,7 +32,10 @@ function Layout() {
       </header>
       <main className={styles.columnContainer}>
         <div className={styles.assetColumn}>
-          <NativeAssetColumn userInputValues={nativeInputValues} />
+          <NativeAssetColumn
+            userInputValues={nativeInputValues}
+            setNativeInputValues={setNativeInputValues}
+          />
         </div>
         {Object.keys(allianceAssets).map((assetId) => {
           return (
@@ -34,6 +47,7 @@ function Layout() {
                 id={+assetId}
                 label={allianceAssets[+assetId].name}
                 userInputValues={allianceAssets[+assetId].inputValues}
+                changeColumnTitle={changeColumnTitle}
               />
             </div>
           );

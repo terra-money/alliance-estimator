@@ -1,4 +1,5 @@
 export interface NativeInputValues {
+  columnName: string;
   denom: string;
   inflationRate: number;
   lsdApr: number;

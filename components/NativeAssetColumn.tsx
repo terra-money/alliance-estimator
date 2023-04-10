@@ -13,10 +13,14 @@ import ActionButtons from './ActionButtons';
 
 function NativeAssetColumn({
   userInputValues,
+  setNativeInputValues,
 }: {
   userInputValues: NativeInputValues;
+  setNativeInputValues: (values: NativeInputValues) => void;
 }) {
   const { poolTotalValue: poolTotal, allianceAssets } = useAppState();
+  const [assetName, setAssetName] = useState<string>(userInputValues.columnName);
+  const [editName, setEditName] = useState<boolean>(false)
   const [cardExpansions, setCardExpansions] = useState<Record<string, boolean>>(
     Object.keys(nativeFieldMap).reduce(
       (acc, _, i) => ({ ...acc, [i]: true }),
@@ -136,21 +140,65 @@ function NativeAssetColumn({
     stakingAPR,
   };
 
+  function handleColumnTitle(event: any) {
+    setAssetName(event.target.value)
+  }
+
+  function handleInputSubmit() {
+    setEditName(false)
+    setNativeInputValues({
+      ...userInputValues,
+      columnName: assetName,
+    })
+  }
+
   // render table for individual token
   return (
     <div className={styles.container}>
       <div className={styles.assetHeader}>
         <div className={styles.leftSide}>
-          <h2 className={styles.assetName}>
-            LUNA
-          </h2>
-          <Image
-            className={styles.icon}
-            src="/Icons/Pencil.svg"
-            alt="Edit Asset Name"
-            width={20}
-            height={20}
-          />
+          {editName ? (
+            <>
+              <input
+                className={styles.assetName}
+                type="text"
+                value={assetName}
+                onChange={handleColumnTitle}
+                autoFocus={true}
+                onKeyDown={({ key }) => key === "Enter" ? handleInputSubmit() : {}}
+              />
+              <div
+                className={styles.iconContainer}
+              >
+                <div className={styles.iconBackground}></div>
+                <Image
+                  className={styles.icon}
+                  src="/Icons/Check.svg"
+                  alt="Confirm"
+                  width={20}
+                  height={20}
+                  onClick={handleInputSubmit}
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <h2
+                className={styles.assetName}
+                onClick={() => setEditName(true)}
+              >
+                {assetName}
+              </h2>
+              <Image
+                className={styles.icon}
+                src="/Icons/Pencil.svg"
+                alt="Edit Asset Name"
+                width={20}
+                height={20}
+                onClick={() => setEditName(true)}
+              />
+            </>
+          )}
         </div>
         <ActionButtons
           expandAll={expandAll}

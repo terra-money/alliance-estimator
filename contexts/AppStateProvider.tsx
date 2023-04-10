@@ -30,6 +30,8 @@ export interface IAppState {
     fieldName: keyof AllianceInputValues,
     value: string | number
   ) => void;
+  setAllianceAssets: (newAssets: AllianceAssets) => void;
+  setNativeInputValues: (newValues: NativeInputValues) => void;
 }
 
 export const [useAppState, AppStateProvider] =
@@ -39,6 +41,7 @@ export function InitAppState({ children }: { children: ReactNode }) {
   // state
   const [nativeInputValues, setNativeInputValues] = useState<NativeInputValues>(
     {
+      columnName: "Native",
       inflationRate: 0.07,
       lsdApr: 0,
       principalStakeOnNativeChain: 527724946,
@@ -188,6 +191,8 @@ export function InitAppState({ children }: { children: ReactNode }) {
         nativeInputValues,
         handleNativeInputChange,
         handleAllianceInputChange,
+        setAllianceAssets,
+        setNativeInputValues,
       }}
     >
       {children}

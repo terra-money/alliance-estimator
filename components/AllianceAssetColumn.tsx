@@ -15,10 +15,12 @@ function AllianceAssetColumn({
   id,
   label,
   userInputValues,
+  changeColumnTitle,
 }: {
   id: number;
   label: string;
   userInputValues: AllianceInputValues;
+  changeColumnTitle: (id: number, name: string) => void;
 }) {
   const {
     removeAllianceAsset,
@@ -29,6 +31,8 @@ function AllianceAssetColumn({
 
   const inputValues = allianceAssets[id].inputValues;
 
+  const [assetName, setAssetName] = useState<string>(label);
+  const [editName, setEditName] = useState<boolean>(false)
   const [cardExpansions, setCardExpansions] = useState<Record<string, boolean>>(
     Object.keys(allianceFieldMap).reduce(
       (acc, _, i) => ({ ...acc, [i]: true }),
@@ -175,27 +179,70 @@ function AllianceAssetColumn({
     removeAllianceAsset(id);
   }
 
+  function handleColumnTitle(event: any) {
+    setAssetName(event.target.value)
+  }
+
+  function handleInputSubmit() {
+    setEditName(false)
+    changeColumnTitle(id, assetName)
+  }
+
   // render table for individual token
   return (
     <div className={styles.container}>
       <div className={styles.assetHeader}>
         <div className={styles.leftSide}>
-          <h2 className={styles.assetName}>{label}</h2>
-          <Image
-            className={styles.icon}
-            src="/Icons/Pencil.svg"
-            alt="Edit Asset Name"
-            width={20}
-            height={20}
-          />
-          <Image
-            className={styles.icon}
-            src="/Icons/Trash.svg"
-            alt="Edit Asset Name"
-            width={20}
-            height={20}
-            onClick={handleRemoveAsset}
-          />
+          {editName ? (
+            <>
+              <input
+                className={styles.assetName}
+                type="text"
+                value={assetName}
+                onChange={handleColumnTitle}
+                autoFocus={true}
+                onKeyDown={({ key }) => key === "Enter" ? handleInputSubmit() : {}}
+              />
+              <div
+                className={styles.iconContainer}
+              >
+                <div className={styles.iconBackground}></div>
+                <Image
+                  className={styles.icon}
+                  src="/Icons/Check.svg"
+                  alt="Confirm"
+                  width={20}
+                  height={20}
+                  onClick={handleInputSubmit}
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <h2
+                className={styles.assetName}
+                onClick={() => setEditName(true)}
+              >
+                {assetName}
+              </h2>
+              <Image
+                className={styles.icon}
+                src="/Icons/Pencil.svg"
+                alt="Edit Asset Name"
+                width={20}
+                height={20}
+                onClick={() => setEditName(true)}
+              />
+              <Image
+                className={styles.icon}
+                src="/Icons/Trash.svg"
+                alt="Edit Asset Name"
+                width={20}
+                height={20}
+                onClick={handleRemoveAsset}
+              />
+            </>
+          )}
         </div>
         <ActionButtons
           expandAll={expandAll}
