@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import {
   nativeFieldMap,
   NativeCalculatedValues,
@@ -29,15 +29,15 @@ function NativeAssetColumn({
   const [allOpened, setAllOpened] = useState<boolean>(true);
   const [allClosed, setAllClosed] = useState<boolean>(false);
 
-  const checkForAllOpened = () => {
+  const checkForAllOpened = useCallback(() => {
     const allOpenedCheck = Object.values(cardExpansions).every((v) => v);
     setAllOpened(allOpenedCheck);
-  };
+  }, [cardExpansions]);
 
-  const checkForAllClosed = () => {
+  const checkForAllClosed = useCallback(() => {
     const allClosedCheck = Object.values(cardExpansions).every((v) => !v);
     setAllClosed(allClosedCheck);
-  };
+  }, [cardExpansions]);
 
   useEffect(() => {
     checkForAllClosed()

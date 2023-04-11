@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useCallback } from "react";
 import {
   allianceFieldMap,
   AllianceCalculatedValues,
@@ -42,15 +42,15 @@ function AllianceAssetColumn({
   const [allOpened, setAllOpened] = useState<boolean>(true);
   const [allClosed, setAllClosed] = useState<boolean>(false);
 
-  const checkForAllOpened = () => {
+  const checkForAllOpened = useCallback(() => {
     const allOpenedCheck = Object.values(cardExpansions).every((v) => v);
     setAllOpened(allOpenedCheck);
-  };
+  }, [cardExpansions]);
 
-  const checkForAllClosed = () => {
+  const checkForAllClosed = useCallback(() => {
     const allClosedCheck = Object.values(cardExpansions).every((v) => !v);
     setAllClosed(allClosedCheck);
-  };
+  }, [cardExpansions]);
 
   useEffect(() => {
     checkForAllClosed()
