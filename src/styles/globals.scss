@@ -1,8 +1,34 @@
+:root {
+  --header-height: 40px;
+  --accent-color: #228BBC;
+  --accent-color-darkened: hsl(199, 69%, 40%);
+
+  --bg: #0D0D11;
+  --font-color: #FFFFFF;
+  --font-color-muted: #E8E8E8;
+  --font-color-secondary: #8A8AA0;
+
+  --border-color: #393939;
+
+  --card-bg: #17191D;
+  --card-header: #272A2F;
+  --card-header-darkened: hsl(218, 9%, 14%);
+
+  --input-bg: #2A2B31;
+  --input-bg-darkened: hsl(231, 8%, 15%);
+
+  // old colors
+  // --card-header: #21212C;
+  // --input-bg: #1F1F2C;
+}
 
 * {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+  line-height: 120%;
+  color: var(--font-color);
+  font-family: "Gotham";
 }
 
 html,
@@ -11,11 +37,16 @@ body {
   font-size: 14px;
   overflow-x: hidden;
   font-family: "Gotham", sans-serif;
+  height: 100%;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 body {
-  color: #FFFFFF;
-  background: #0D0D11;
+  color: var(--font-color);
+  background: var(--bg);
 }
 
 a {
