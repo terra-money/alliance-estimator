@@ -26,11 +26,6 @@ function NativeAssetColumn({
     )
   );
 
-  useEffect(() => {
-    checkForAllClosed()
-    checkForAllOpened()
-  }, [cardExpansions])
-
   const [allOpened, setAllOpened] = useState<boolean>(true);
   const [allClosed, setAllClosed] = useState<boolean>(false);
 
@@ -43,6 +38,11 @@ function NativeAssetColumn({
     const allClosedCheck = Object.values(cardExpansions).every((v) => !v);
     setAllClosed(allClosedCheck);
   };
+
+  useEffect(() => {
+    checkForAllClosed()
+    checkForAllOpened()
+  }, [cardExpansions, checkForAllClosed, checkForAllOpened]);
 
   function toggleExpansion(index: number) {
     const newCardState = { [index]: !cardExpansions[index] };
