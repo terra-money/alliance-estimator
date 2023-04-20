@@ -5,10 +5,10 @@ import {
   AllianceInputValues,
 } from "data";
 import { useAppState } from "contexts";
-import { TAKE_RATE_INTERVAL } from "../constants";
+import { TAKE_RATE_INTERVAL } from "../../constants";
 import styles from "styles/AllianceAssetColumn.module.scss";
-import Card from "./Card";
-import ActionButtons from './ActionButtons';
+import Card from "../Card";
+import { ActionButtons } from "components";
 
 function AllianceAssetColumn({
   id,

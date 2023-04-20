@@ -6,8 +6,8 @@ import {
 } from "data";
 import { useAppState } from "contexts";
 import styles from "styles/NativeAssetColumn.module.scss";
-import Card from "./Card";
-import ActionButtons from './ActionButtons';
+import Card from "../Card";
+import { ActionButtons } from "components";
 
 function NativeAssetColumn({
   userInputValues,

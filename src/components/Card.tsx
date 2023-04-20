@@ -13,7 +13,7 @@ import {
 } from "data";
 import { useAppState } from "contexts";
 import cardStyles from "../styles/Card.module.scss";
-import Input from "./Input";
+import { Input } from "components";
 
 const Card = ({
   section,
