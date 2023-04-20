@@ -15,6 +15,7 @@ const Estimator = ({
   const endOfPageRef = useRef<HTMLDivElement | null>(null);
 
   function handleScroll() {
+    console.log('hello?')
     setTimeout(() => {
       endOfPageRef.current?.scrollIntoView({
         behavior: "smooth",
@@ -55,18 +56,20 @@ const Estimator = ({
           </div>
         );
       })}
-      {showAddButton && (
-        <div ref={endOfPageRef} className={styles.addColumn}>
-          <button
-            onClick={() => {
-              addAllianceAsset("New Asset");
-              handleScroll();
-            }}
-          >
-            <img src={add_button} alt="Add Asset" />
-          </button>
-        </div>
-      )}
+      <div ref={endOfPageRef} className={styles.lastColumn}>
+        {showAddButton && (
+          <div  className={styles.addColumn}>
+            <button
+              onClick={() => {
+                addAllianceAsset("New Asset");
+                handleScroll();
+              }}
+            >
+              <img src={add_button} alt="Add Asset" />
+            </button>
+          </div>
+        )}
+      </div>
     </section>
   )
 };
