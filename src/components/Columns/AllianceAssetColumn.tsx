@@ -1,22 +1,25 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useCallback } from "react";
 import {
   allianceFieldMap,
   AllianceCalculatedValues,
   AllianceInputValues,
 } from "data";
 import { useAppState } from "contexts";
-import { TAKE_RATE_INTERVAL } from "../constants";
-import styles from "styles/AllianceAssetColumn.module.css";
-import Card from "./Card";
+import { TAKE_RATE_INTERVAL } from "../../constants";
+import styles from "styles/AllianceAssetColumn.module.scss";
+import Card from "../Card";
+import { ActionButtons } from "components";
 
 function AllianceAssetColumn({
   id,
   label,
   userInputValues,
+  changeColumnTitle,
 }: {
   id: number;
   label: string;
   userInputValues: AllianceInputValues;
+  changeColumnTitle: (id: number, name: string) => void;
 }) {
   const {
     removeAllianceAsset,
@@ -27,12 +30,32 @@ function AllianceAssetColumn({
 
   const inputValues = allianceAssets[id].inputValues;
 
+  const [assetName, setAssetName] = useState<string>(label);
+  const [editName, setEditName] = useState<boolean>(false)
   const [cardExpansions, setCardExpansions] = useState<Record<string, boolean>>(
     Object.keys(allianceFieldMap).reduce(
       (acc, _, i) => ({ ...acc, [i]: true }),
       {}
     )
   );
+
+  const [allOpened, setAllOpened] = useState<boolean>(true);
+  const [allClosed, setAllClosed] = useState<boolean>(false);
+
+  const checkForAllOpened = useCallback(() => {
+    const allOpenedCheck = Object.values(cardExpansions).every((v) => v);
+    setAllOpened(allOpenedCheck);
+  }, [cardExpansions]);
+
+  const checkForAllClosed = useCallback(() => {
+    const allClosedCheck = Object.values(cardExpansions).every((v) => !v);
+    setAllClosed(allClosedCheck);
+  }, [cardExpansions]);
+
+  useEffect(() => {
+    checkForAllClosed()
+    checkForAllOpened()
+  }, [cardExpansions, checkForAllClosed, checkForAllOpened]);
 
   function toggleExpansion(index: number) {
     const newCardState = { [index]: !cardExpansions[index] };
@@ -174,32 +197,95 @@ function AllianceAssetColumn({
     removeAllianceAsset(id);
   }
 
+  function handleColumnTitle(event: any) {
+    setAssetName(event.target.value)
+  }
+
+  function handleInputSubmit() {
+    setEditName(false)
+    changeColumnTitle(id, assetName)
+  }
+
   // render table for individual token
   return (
     <div className={styles.container}>
       <div className={styles.assetHeader}>
-        <h2 className={styles.assetName}>{label}</h2>
-        <div className={styles.columnActions}>
-          <button onClick={expandAll}>Expand All</button>
-          <button onClick={collapseAll}>Collapse All</button>
-          <button onClick={handleRemoveAsset}>Remove Asset</button>
+        <div className={styles.leftSide}>
+          {editName ? (
+            <>
+              <input
+                className={styles.assetName}
+                type="text"
+                value={assetName}
+                onChange={handleColumnTitle}
+                autoFocus={true}
+                onKeyDown={({ key }) => key === "Enter" ? handleInputSubmit() : {}}
+              />
+              <div
+                className={styles.iconContainer}
+              >
+                <div className={styles.iconBackground}></div>
+                <img
+                  className={styles.icon}
+                  src="/Icons/Check.svg"
+                  alt="Confirm"
+                  width={20}
+                  height={20}
+                  onClick={handleInputSubmit}
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <h2
+                className={styles.assetName}
+                onClick={() => setEditName(true)}
+              >
+                {assetName}
+              </h2>
+              <img
+                className={styles.icon}
+                src="/Icons/Pencil.svg"
+                alt="Edit Asset Name"
+                width={14}
+                height={14}
+                onClick={() => setEditName(true)}
+              />
+              <img
+                className={styles.icon}
+                src="/Icons/Trash.svg"
+                alt="Edit Asset Name"
+                width={14}
+                height={14}
+                onClick={handleRemoveAsset}
+              />
+            </>
+          )}
         </div>
+        <ActionButtons
+          expandAll={expandAll}
+          collapseAll={collapseAll}
+          allOpened={allOpened}
+          allClosed={allClosed}
+        />
       </div>
-      {Object.keys(allianceFieldMap).map((section, i) => {
-        return (
-          <Card
-            toggleExpansion={toggleExpansion}
-            expanded={cardExpansions[i]}
-            key={`section-${section}`}
-            assetId={id}
-            index={i}
-            type="alliance"
-            section={section}
-            userInputValues={userInputValues}
-            derivedValues={derivedValues}
-          />
-        );
-      })}
+      <div className={styles.cards}>
+        {Object.keys(allianceFieldMap).map((section, i) => {
+          return (
+            <Card
+              toggleExpansion={toggleExpansion}
+              expanded={cardExpansions[i]}
+              key={`section-${section}`}
+              assetId={id}
+              index={i}
+              type="alliance"
+              section={section}
+              userInputValues={userInputValues}
+              derivedValues={derivedValues}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 }

@@ -1,54 +1,55 @@
-import { useRef } from "react";
-import { NativeAssetColumn, AllianceAssetColumn } from "components";
-import { useAppState } from "contexts";
-import styles from "styles/Layout.module.css";
-import add_button from "styles/icons/add_button.svg";
-import { APP_TITLE } from "../constants";
+import { useRef, useEffect, useState } from "react";
+import styles from "styles/Layout.module.scss";
+import Navigation from './Navigation';
+import LandingSection from './Sections/LandingSection';
+import Estimator from './Sections/Estimator';
 
 function Layout() {
-  const { allianceAssets, addAllianceAsset, nativeInputValues } = useAppState();
-  const endOfPageRef = useRef<HTMLDivElement | null>(null);
-  function handleScroll() {
-    setTimeout(() => {
-      endOfPageRef.current?.scrollIntoView({
-        behavior: "smooth",
-      });
-    }, 100);
+  const [showAddButton, setShowAddButton] = useState(false);
+  const estimatorRef = useRef<HTMLDivElement | null>(null);
+
+  function handleScrollToEstimator() {
+    estimatorRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
   }
+
+  const handleShowAddButton = () => {
+    const scrollY = window.scrollY;
+    const height = window.innerHeight;
+
+    if (scrollY >= height - 200) {
+      setShowAddButton(true);
+    } else {
+      setShowAddButton(false);
+    }
+  }
+
+  useEffect(() => {
+    window.addEventListener(
+      'scroll',
+      () => { handleShowAddButton() }
+    );
+
+    return () => {
+      window.removeEventListener(
+        'scroll',
+        () => { handleShowAddButton() }
+      );
+    }
+  }, [])
 
   return (
     <>
-      <header>
-        <h1>{APP_TITLE}</h1>
+      <header className={styles.header}>
+        <Navigation />
       </header>
-      <main className={styles.columnContainer}>
-        <div className={styles.assetColumn}>
-          <NativeAssetColumn userInputValues={nativeInputValues} />
-        </div>
-        {Object.keys(allianceAssets).map((assetId) => {
-          return (
-            <div
-              key={`alliance-asset-${assetId}`}
-              className={styles.assetColumn}
-            >
-              <AllianceAssetColumn
-                id={+assetId}
-                label={allianceAssets[+assetId].name}
-                userInputValues={allianceAssets[+assetId].inputValues}
-              />
-            </div>
-          );
-        })}
-        <div ref={endOfPageRef} className={styles.addColumn}>
-          <button
-            onClick={() => {
-              addAllianceAsset("New Asset");
-              handleScroll();
-            }}
-          >
-            <img src={add_button} alt="Add Asset" />
-          </button>
-        </div>
+      <main>
+        <LandingSection handleScrollToEstimator={handleScrollToEstimator} />
+        <Estimator
+          showAddButton={showAddButton}
+          estimatorRef={estimatorRef}
+        />
       </main>
     </>
   );

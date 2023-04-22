@@ -4,10 +4,8 @@ import { Layout } from "components";
 
 export default function Home() {
   return (
-    <main>
-      <InitAppState>
-        <Layout />
-      </InitAppState>
-    </main>
+    <InitAppState>
+      <Layout />
+    </InitAppState>
   );
 }

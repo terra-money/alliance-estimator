@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import {
   nativeFieldMap,
   NativeInputValues,
@@ -12,7 +13,7 @@ import {
 } from "data";
 import { useAppState } from "contexts";
 import cardStyles from "../styles/Card.module.scss";
-import Input from "./Input";
+import { Input } from "components";
 
 const Card = ({
   section,
@@ -69,52 +70,69 @@ const Card = ({
     }
   }
 
+  useEffect(() => {
+    const content = document.getElementById(`content-${type === 'native' ? "" : assetId}-${index}`);
+    if (content) {
+      content.style.maxHeight = expanded ? `${content.scrollHeight + 24}px` : "0px";
+    }
+  }, [assetId, expanded, index, type])
+
   return (
-    <div
-      className={`${cardStyles.fieldSection} ${
-        expanded && cardStyles.expanded
-      }`}
-    >
-      <div
-        className={cardStyles.fieldSectionHeader}
-        onClick={handleHeaderClick}
+    <div className={cardStyles.fieldSection}>
+      <section
+        className={`${cardStyles.accordion} ${expanded ? cardStyles.opened : ""}`}
+        key={`accordion-${section}`}
       >
-        <h3 className={cardStyles.fieldSectionTitle}>{section}</h3>
-        <div>{expanded ? "^" : "v"}</div>
-      </div>
-      <div className={cardStyles.inputs}>
-        {fields[section].map((field, i) => (
-          <div className={`${cardStyles.fieldRow}`} key={field.name}>
-            <div className={cardStyles.labelContainer}>
-              <div className={cardStyles.fieldLabel}>{field.label}:</div>
-              <div className={cardStyles.secondaryLabel}>
-                {field.secondaryLabel}
+        <div
+          className={cardStyles.top}
+          onClick={handleHeaderClick}
+        >
+          <h5 className={cardStyles.title}>{section}</h5>
+          <img
+            className={cardStyles.icon}
+            src="/Icons/Chevron.svg"
+            alt="icon"
+            width={18}
+            height={18}
+          />
+        </div>
+        <div
+          className={cardStyles.content}
+          id={`content-${type === 'native' ? "" : assetId}-${index}`}
+        >
+          {fields[section].map((field, i) => (
+            <div className={`${cardStyles.fieldRow}`} key={field.name}>
+              <div className={cardStyles.labelContainer}>
+                <div className={cardStyles.fieldLabel}>{field.label}:</div>
+                <div className={cardStyles.secondaryLabel}>
+                  {field.secondaryLabel}
+                </div>
+              </div>
+              <div className={cardStyles.fieldValue}>
+                {field.input ? (
+                  <Input
+                    field={field}
+                    value={
+                      isInputField(field.name, userInputValues)
+                        ? userInputValues[field.name]
+                        : ""
+                    }
+                    onChange={handleInputUpdate}
+                  />
+                ) : (
+                  <div className={cardStyles.textValue}>
+                    {isDerivedField(field.name, derivedValues)
+                      ? formatValue(derivedValues[field.name], field)
+                      : ""}
+                  </div>
+                )}
               </div>
             </div>
-            <div className={cardStyles.fieldValue}>
-              {field.input ? (
-                <Input
-                  field={field}
-                  value={
-                    isInputField(field.name, userInputValues)
-                      ? userInputValues[field.name]
-                      : ""
-                  }
-                  onChange={handleInputUpdate}
-                />
-              ) : (
-                <div className={cardStyles.textValue}>
-                  {isDerivedField(field.name, derivedValues)
-                    ? formatValue(derivedValues[field.name], field)
-                    : ""}
-                </div>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      </section>
     </div>
-  );
+  )
 };
 
 export default Card;

@@ -1,0 +1,53 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .cards {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .assetHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: .5rem 0;
+
+    .leftSide {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .assetName {
+        text-decoration: underline;
+        background: transparent;
+        border: none;
+        font-size: 1.5em;
+        font-weight: bold;
+        max-width: 175px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .iconContainer {
+        position: relative;
+      }
+
+      .iconBackground {
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        top: 2px;
+        left: 2px;
+        background-color: white;
+      }
+
+      .icon {
+        cursor: pointer;
+        position: relative;
+      }
+    }
+  }
+}
