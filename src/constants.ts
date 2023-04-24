@@ -1,6 +1,6 @@
 export const TAKE_RATE_INTERVAL = 5
 export const APP_TITLE = "Terra Staking Reward Estimator"
-export const USE_MOCK_DATA = true
+export const USE_MOCK_DATA = false
 export const MOCK_DATA = {
   0: {
     name: "WHALELSD",

@@ -1,26 +1,32 @@
-import { useRef } from "react";
-import { useAppState } from "contexts";
-import { NativeAssetColumn, AllianceAssetColumn } from "components";
-import add_button from "styles/icons/add_button.svg";
-import styles from "styles/Estimator.module.scss";
+import { useRef } from "react"
+import { useAppState } from "contexts"
+import { NativeAssetColumn, AllianceAssetColumn } from "components"
+import add_button from "styles/icons/add_button.svg"
+import styles from "styles/Estimator.module.scss"
 
 const Estimator = ({
   showAddButton,
   estimatorRef,
 }: {
-  showAddButton: boolean;
-  estimatorRef: any;
+  showAddButton: boolean
+  estimatorRef: any
 }) => {
-  const { allianceAssets, addAllianceAsset, nativeInputValues, setNativeInputValues, setAllianceAssets } = useAppState();
-  const endOfPageRef = useRef<HTMLDivElement | null>(null);
+  const {
+    allianceAssets,
+    addAllianceAsset,
+    nativeInputValues,
+    setNativeInputValues,
+    setAllianceAssets,
+  } = useAppState()
+  const endOfPageRef = useRef<HTMLDivElement | null>(null)
 
   function handleScroll() {
-    console.log('hello?')
+    console.log("hello?")
     setTimeout(() => {
       endOfPageRef.current?.scrollIntoView({
         behavior: "smooth",
-      });
-    }, 100);
+      })
+    }, 100)
   }
 
   const changeColumnTitle = (id: any, name: any) => {
@@ -43,10 +49,7 @@ const Estimator = ({
       </div>
       {Object.keys(allianceAssets).map((assetId) => {
         return (
-          <div
-            key={`alliance-asset-${assetId}`}
-            className={styles.assetColumn}
-          >
+          <div key={`alliance-asset-${assetId}`} className={styles.assetColumn}>
             <AllianceAssetColumn
               id={+assetId}
               label={allianceAssets[+assetId].name}
@@ -54,15 +57,15 @@ const Estimator = ({
               changeColumnTitle={changeColumnTitle}
             />
           </div>
-        );
+        )
       })}
       <div ref={endOfPageRef} className={styles.lastColumn}>
         {showAddButton && (
-          <div  className={styles.addColumn}>
+          <div className={styles.addColumn}>
             <button
               onClick={() => {
-                addAllianceAsset("New Asset");
-                handleScroll();
+                addAllianceAsset("New Asset")
+                handleScroll()
               }}
             >
               <img src={add_button} alt="Add Asset" />
@@ -72,6 +75,6 @@ const Estimator = ({
       </div>
     </section>
   )
-};
+}
 
-export default Estimator;
+export default Estimator
