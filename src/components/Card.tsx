@@ -24,6 +24,7 @@ const Card = ({
   index,
   toggleExpansion,
   expanded,
+  moreInputRequiredFields,
 }: {
   assetId?: number;
   section: string;
@@ -33,6 +34,7 @@ const Card = ({
   index: number;
   toggleExpansion: (index: number) => void;
   expanded: boolean;
+  moreInputRequiredFields?: string[];
 }) => {
   const { handleNativeInputChange, handleAllianceInputChange } = useAppState();
   const fields = type === "native" ? nativeFieldMap : allianceFieldMap;
@@ -52,19 +54,20 @@ const Card = ({
     toggleExpansion(index);
   }
 
-  function handleInputUpdate(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleInputUpdate(data: any) {
+    const dataKey = Object.keys(data)[0];
     if (type === "native") {
       handleNativeInputChange(
-        e.target.name as keyof NativeInputValues,
-        e.target.value.replace(/[,$]/g, "")
+        dataKey as keyof NativeInputValues,
+        data[dataKey].replace(/[,$]/g, "")
       );
     } else {
       if (assetId === undefined) return;
-      const value = e.target.value.replace(/[,$]/g, "");
+      const value = data[dataKey].replace(/[,$]/g, "");
 
       handleAllianceInputChange(
         assetId,
-        e.target.name as keyof AllianceInputValues,
+        dataKey as keyof AllianceInputValues,
         value
       );
     }
@@ -121,9 +124,13 @@ const Card = ({
                   />
                 ) : (
                   <div className={cardStyles.textValue}>
-                    {isDerivedField(field.name, derivedValues)
-                      ? formatValue(derivedValues[field.name], field)
-                      : ""}
+                    {moreInputRequiredFields?.includes(field.name) ? (
+                      <span>Input Required</span>
+                    ) : (
+                      isDerivedField(field.name, derivedValues)
+                        ? formatValue(derivedValues[field.name], field)
+                        : ""
+                    )}
                   </div>
                 )}
               </div>

@@ -1,15 +1,15 @@
 import { useRef } from "react";
-import { useAppState } from "contexts";
+import { useExampleAppState } from "../../contexts/ExampleAppStateProvider";
 import { NativeAssetColumn, AllianceAssetColumn } from "components";
 import add_button from "styles/icons/add_button.svg";
 import styles from "styles/Estimator.module.scss";
 
-const Estimator = ({
+const ExampleEstimator = ({
   estimatorRef,
 }: {
   estimatorRef: any;
 }) => {
-  const { allianceAssets, addAllianceAsset, demoNativeInputValues, setDemoNativeInputValues, setAllianceAssets } = useAppState();
+  const { allianceAssets, addAllianceAsset, demoNativeInputValues, setDemoNativeInputValues, setAllianceAssets } = useExampleAppState();
   const endOfPageRef = useRef<HTMLDivElement | null>(null);
 
   function handleScroll() {
@@ -69,4 +69,4 @@ const Estimator = ({
   )
 };
 
-export default Estimator;
+export default ExampleEstimator;

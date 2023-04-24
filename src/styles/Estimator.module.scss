@@ -1,9 +1,9 @@
 .columnContainer {
   display: flex;
-  overflow-x: scroll;
   min-height: 100vh;
   padding-bottom: 50px;
   position: relative;
+  margin-top: 2rem;
 
   /* Firefox */
   & {

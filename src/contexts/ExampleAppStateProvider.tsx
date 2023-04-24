@@ -5,6 +5,7 @@ import {
   type AllianceInputValues,
   isInputField,
 } from "data";
+import { MOCK_DATA } from '../constants';
 
 type AllianceAssets = Record<
   number,
@@ -33,24 +34,24 @@ export interface IAppState {
   setDemoNativeInputValues: (newValues: NativeInputValues) => void;
 }
 
-export const [useAppState, AppStateProvider] =
-  createContext<IAppState>("useAppState");
+export const [useExampleAppState, ExampleAppStateProvider] =
+  createContext<IAppState>("useExampleAppState");
 
-export function InitAppState({ children }: { children: ReactNode }) {
+export function ExampleAppState({ children }: { children: ReactNode }) {
   // state
   const [demoNativeInputValues, setDemoNativeInputValues] = useState<NativeInputValues>(
     {
       columnName: "Native",
-      inflationRate: NaN, // Chain Data - Annual Inflation Rate
-      lsdAnnualEstimate: NaN, // Chain Data - Annual Estimated LSD Growth Rate
-      totalTokenSupply: NaN, // Chain Data - Total Token Supply
-      assetPrice: NaN, // Chain Data - Asset Price
-      allianceRewardWeight: NaN, // Alliance Asset Parameters - Alliance Reward Weight
-      assetStakedInAlliance: NaN, // Reward Pool - Asset Staked in Alliance
+      inflationRate: 7, // Chain Data - Annual Inflation Rate
+      lsdAnnualEstimate: 0, // Chain Data - Annual Estimated LSD Growth Rate
+      totalTokenSupply: 1073271122, // Chain Data - Total Token Supply
+      assetPrice: 1.3, // Chain Data - Asset Price
+      allianceRewardWeight: 1, // Alliance Asset Parameters - Alliance Reward Weight
+      assetStakedInAlliance: 527724946, // Reward Pool - Asset Staked in Alliance
       denom: "LUNA",
     }
   );
-  const [allianceAssets, setAllianceAssets] = useState<AllianceAssets>({});
+  const [allianceAssets, setAllianceAssets] = useState<AllianceAssets>(MOCK_DATA);
 
   const poolTotalValue = useMemo(() => {
     let allianceAssetValue = 0;
@@ -122,11 +123,11 @@ export function InitAppState({ children }: { children: ReactNode }) {
 
   function addAllianceAsset(asset: string) {
     const newAsset: AllianceInputValues = {
-      lsdAnnualEstimate: NaN,
-      assetPrice: NaN,
-      allianceRewardWeight: NaN,
-      annualizedTakeRate: NaN,
-      assetStakedInAlliance: NaN,
+      lsdAnnualEstimate: 0,
+      assetPrice: 0,
+      allianceRewardWeight: 0,
+      annualizedTakeRate: 0,
+      assetStakedInAlliance: 0,
     };
 
     setAllianceAssets((cur) => {
@@ -150,7 +151,7 @@ export function InitAppState({ children }: { children: ReactNode }) {
 
   // render
   return (
-    <AppStateProvider
+    <ExampleAppStateProvider
       value={{
         allianceAssets,
         addAllianceAsset,
@@ -164,8 +165,8 @@ export function InitAppState({ children }: { children: ReactNode }) {
       }}
     >
       {children}
-    </AppStateProvider>
+    </ExampleAppStateProvider>
   );
 }
 
-export default InitAppState;
+export default ExampleAppState;

@@ -1,57 +1,16 @@
-import { useState, useEffect } from 'react';
-import { motion, useScroll } from 'framer-motion';
+import { useState } from 'react';
 import styles from "styles/Navigation.module.scss";
-
-const navigationVariants = {
-  hidden: {
-    y: -100,
-    opacity: 0,
-  },
-  visible: {
-    y: 0,
-    opacity: 1,
-    transition: {
-      y: {
-        duration: 0.3, ease: [0.34, 1.26, 0.64, 1]
-      },
-      opacity: {
-        duration: 1,
-      }
-    }
-  },
-};
 
 const Navigation = () => {
   const [hoveredIndex, setHoveredIndex] = useState(-1);
-  const [hidden, setHidden] = useState(true);
-
-  const { scrollY } = useScroll() as any;
-
-  useEffect(() => {
-    if (scrollY?.current === 0) {
-      setHidden(false);
-    }
-  }, [scrollY, setHidden])
-
-  useEffect(() => {
-    scrollY.onChange(() => {
-      if (scrollY?.current < scrollY?.prev && scrollY?.current < 500) {
-        setHidden(false);
-      } else if (scrollY?.current > 50 && scrollY?.current > scrollY?.prev) {
-        setHidden(true);
-      }
-    })
-  }, [scrollY, setHidden])
 
   return (
-    <motion.nav
-      className={styles.navigation}
-      variants={navigationVariants}
-      initial="hidden"
-      animate={hidden ? "hidden" : "visible"}
-    >
+    <nav className={styles.navigation}>
       <div className={styles.left_container}>
-        <div className={styles.logo_container}>
+        <a
+          className={styles.logo_container}
+          href="/"
+        >
           <img
             src="/Icons/Logo.svg"
             className={styles.logo}
@@ -59,8 +18,8 @@ const Navigation = () => {
             width={40}
             height={40}
           />
-          <h3>Alliance</h3>
-        </div>
+          <h3>Alliance Estimator</h3>
+        </a>
       </div>
       <div className={styles.button_container}>
         <a
@@ -103,7 +62,7 @@ const Navigation = () => {
           />
         </button>
       </div>
-    </motion.nav>
+    </nav>
   )
 }
 

@@ -1,22 +1,39 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
+import { useLocation } from "react-router-dom";
 import {
   nativeFieldMap,
   NativeCalculatedValues,
   NativeInputValues,
 } from "data";
 import { useAppState } from "contexts";
+import { useExampleAppState } from "../../contexts/ExampleAppStateProvider";
 import styles from "styles/NativeAssetColumn.module.scss";
 import Card from "../Card";
 import { ActionButtons } from "components";
 
 function NativeAssetColumn({
   userInputValues,
-  setNativeInputValues,
+  setDemoNativeInputValues,
 }: {
   userInputValues: NativeInputValues;
-  setNativeInputValues: (values: NativeInputValues) => void;
+  setDemoNativeInputValues: (values: NativeInputValues) => void;
 }) {
-  const { poolTotalValue: poolTotal, allianceAssets } = useAppState();
+  const location = useLocation();
+  const isExample = location.pathname === "/mock-data";
+
+  const {
+    allianceAssets: standardAllianceAssets,
+    poolTotalValue: standardPoolTotalValue,
+  } = useAppState();
+
+  const {
+    allianceAssets: exampleAllianceAssets,
+    poolTotalValue: examplePoolTotalValue,
+  } = useExampleAppState();
+
+  const allianceAssets = isExample ? exampleAllianceAssets : standardAllianceAssets;
+  const poolTotal = isExample ? examplePoolTotalValue : standardPoolTotalValue;
+
   const [assetName, setAssetName] = useState<string>(userInputValues.columnName);
   const [editName, setEditName] = useState<boolean>(false)
   const [cardExpansions, setCardExpansions] = useState<Record<string, boolean>>(
@@ -65,6 +82,8 @@ function NativeAssetColumn({
     setCardExpansions(newCardState);
   }
 
+  const moreInputRequiredFields = [] as string[];
+
   const poolTotalValue = useMemo(() => poolTotal, [poolTotal]);
 
   // cache derived values
@@ -73,6 +92,9 @@ function NativeAssetColumn({
       (userInputValues.inflationRate / 100) * userInputValues.totalTokenSupply,
     [userInputValues.inflationRate, userInputValues.totalTokenSupply]
   );
+  if (isNaN(rewardPoolOnNativeChain)) {
+    moreInputRequiredFields.push("rewardPoolOnNativeChain");
+  }
 
   const rewardPoolPercentage = useMemo(() => {
     let allianceTotalWeight = 0;
@@ -85,50 +107,75 @@ function NativeAssetColumn({
 
     return +nativeWeight / (+allianceTotalWeight + +nativeWeight);
   }, [allianceAssets, userInputValues.allianceRewardWeight]);
+  if (isNaN(rewardPoolPercentage)) {
+    moreInputRequiredFields.push("rewardPoolPercentage");
+  }
 
   const rewardPoolMakeup = useMemo(
     () =>
       userInputValues.totalTokenSupply * (userInputValues.inflationRate / 100),
     [userInputValues.totalTokenSupply, userInputValues.inflationRate]
   );
+  if (isNaN(rewardPoolMakeup)) {
+    moreInputRequiredFields.push("rewardPoolMakeup");
+  }
+
   const valueOfDenomInRewardPoolExcludingLSD = useMemo(
     () => rewardPoolMakeup * userInputValues.assetPrice,
     [rewardPoolMakeup, userInputValues.assetPrice]
   );
+  if (isNaN(valueOfDenomInRewardPoolExcludingLSD)) {
+    moreInputRequiredFields.push("valueOfDenomInRewardPoolExcludingLSD");
+  }
 
   const valueOfDenomInRewardPoolIncludingLSD = useMemo(
     () =>
       valueOfDenomInRewardPoolExcludingLSD +
-      rewardPoolMakeup * userInputValues.lsdApr * userInputValues.assetPrice,
+      rewardPoolMakeup * userInputValues.lsdAnnualEstimate * userInputValues.assetPrice,
     [
       rewardPoolMakeup,
       valueOfDenomInRewardPoolExcludingLSD,
       userInputValues.assetPrice,
-      userInputValues.lsdApr,
+      userInputValues.lsdAnnualEstimate,
     ]
   );
+  if (isNaN(valueOfDenomInRewardPoolIncludingLSD)) {
+    moreInputRequiredFields.push("valueOfDenomInRewardPoolIncludingLSD");
+  }
 
   const percentageMakeupOfRewardPoolValue = useMemo(
     () => valueOfDenomInRewardPoolIncludingLSD / poolTotalValue,
     [poolTotalValue, valueOfDenomInRewardPoolIncludingLSD]
   );
+  if (isNaN(percentageMakeupOfRewardPoolValue)) {
+    moreInputRequiredFields.push("percentageMakeupOfRewardPoolValue");
+  }
 
   const principalStakeExcludingRewards = useMemo(
     () => userInputValues.assetStakedInAlliance,
     [userInputValues.assetStakedInAlliance]
   );
+  if (isNaN(principalStakeExcludingRewards)) {
+    moreInputRequiredFields.push("principalStakeExcludingRewards");
+  }
 
   const principalStakeIncludingLSD = useMemo(
     () => principalStakeExcludingRewards * userInputValues.assetPrice,
     [principalStakeExcludingRewards, userInputValues.assetPrice]
   );
+  if (isNaN(principalStakeIncludingLSD)) {
+    moreInputRequiredFields.push("principalStakeIncludingLSD");
+  }
 
   const stakingRewardValue = useMemo(
     () => rewardPoolPercentage * poolTotalValue,
     [poolTotalValue, rewardPoolPercentage]
   );
+  if (isNaN(stakingRewardValue)) {
+    moreInputRequiredFields.push("stakingRewardValue");
+  }
 
-  const stakingAPR = useMemo(
+  const stakingEstimatedPercentage = useMemo(
     () =>
       (principalStakeIncludingLSD +
         stakingRewardValue -
@@ -141,6 +188,9 @@ function NativeAssetColumn({
       userInputValues.assetPrice,
     ]
   );
+  if (isNaN(stakingEstimatedPercentage)) {
+    moreInputRequiredFields.push("stakingEstimatedPercentage");
+  }
 
   // map to lookup derived values later
   const derivedValues: NativeCalculatedValues = {
@@ -154,7 +204,7 @@ function NativeAssetColumn({
     principalStakeExcludingRewards,
     principalStakeIncludingLSD,
     stakingRewardValue,
-    stakingAPR,
+    stakingEstimatedPercentage,
   };
 
   function handleColumnTitle(event: any) {
@@ -163,7 +213,7 @@ function NativeAssetColumn({
 
   function handleInputSubmit() {
     setEditName(false)
-    setNativeInputValues({
+    setDemoNativeInputValues({
       ...userInputValues,
       columnName: assetName,
     })
@@ -236,6 +286,7 @@ function NativeAssetColumn({
               section={section}
               userInputValues={userInputValues}
               derivedValues={derivedValues}
+              moreInputRequiredFields={moreInputRequiredFields}
             />
           );
         })}
