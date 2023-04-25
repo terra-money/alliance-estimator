@@ -3,9 +3,9 @@ export const APP_TITLE = "Terra Staking Reward Estimator"
 export const USE_MOCK_DATA = false
 export const MOCK_DATA = {
   0: {
-    name: "WHALELSD",
+    name: "RandomLSD",
     inputValues: {
-      lsdApr: 16,
+      lsdAnnualEstimate: 16,
       assetPrice: 0.015,
       allianceRewardWeight: 0.001,
       annualizedTakeRate: 16,
@@ -13,9 +13,9 @@ export const MOCK_DATA = {
     },
   },
   1: {
-    name: "KUJILSD",
+    name: "Number2LSD",
     inputValues: {
-      lsdApr: 16,
+      lsdAnnualEstimate: 16,
       assetPrice: 0.424,
       allianceRewardWeight: 0.01,
       annualizedTakeRate: 11,
@@ -23,9 +23,9 @@ export const MOCK_DATA = {
     },
   },
   2: {
-    name: "OSMOLSD",
+    name: "AMLSD",
     inputValues: {
-      lsdApr: 22,
+      lsdAnnualEstimate: 22,
       assetPrice: 0.819,
       allianceRewardWeight: 0.04,
       annualizedTakeRate: 22,

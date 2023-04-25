@@ -1,0 +1,18 @@
+.mockDataLink {
+  margin: 0.5rem 2rem 0 auto;
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  background: var(--accent-color);
+  border-radius: 8px;
+  border: none;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 0.65rem 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  gap: 4px;
+  &:hover {
+    background: var(--accent-color-darkened);
+  }
+}

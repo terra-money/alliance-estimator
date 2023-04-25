@@ -1,10 +1,12 @@
 import { useMemo, useState, useEffect, useCallback } from "react";
+import { useLocation } from "react-router-dom";
 import {
   allianceFieldMap,
   AllianceCalculatedValues,
   AllianceInputValues,
 } from "data";
 import { useAppState } from "contexts";
+import { useExampleAppState } from "../../contexts/ExampleAppStateProvider";
 import { TAKE_RATE_INTERVAL } from "../../constants";
 import styles from "styles/AllianceAssetColumn.module.scss";
 import Card from "../Card";
@@ -21,12 +23,27 @@ function AllianceAssetColumn({
   userInputValues: AllianceInputValues;
   changeColumnTitle: (id: number, name: string) => void;
 }) {
+  const location = useLocation();
+  const isExample = location.pathname === "/mock-data";
+
   const {
-    removeAllianceAsset,
-    allianceAssets,
-    nativeInputValues,
-    poolTotalValue,
+    removeAllianceAsset: standardRemoveAllianceAsset,
+    allianceAssets: standardAllianceAssets,
+    nativeInputValues: standardNativeInputValues,
+    poolTotalValue: standardPoolTotalValue,
   } = useAppState();
+
+  const {
+    removeAllianceAsset: exampleRemoveAllianceAsset,
+    allianceAssets: exampleAllianceAssets,
+    exampleNativeInputValues: exampleDemoNativeInputValues,
+    poolTotalValue: examplePoolTotalValue,
+  } = useExampleAppState();
+
+  const removeAllianceAsset = isExample ? exampleRemoveAllianceAsset : standardRemoveAllianceAsset;
+  const allianceAssets = isExample ? exampleAllianceAssets : standardAllianceAssets;
+  const nativeInputValues = isExample ? exampleDemoNativeInputValues : standardNativeInputValues;
+  const poolTotalValue = isExample ? examplePoolTotalValue : standardPoolTotalValue;
 
   const inputValues = allianceAssets[id].inputValues;
 
@@ -78,6 +95,8 @@ function AllianceAssetColumn({
     setCardExpansions(newCardState);
   }
 
+  const moreInputRequiredFields = [] as string[];
+
   // global values
   const takeRateInterval = TAKE_RATE_INTERVAL;
 
@@ -98,6 +117,9 @@ function AllianceAssetColumn({
     inputValues.allianceRewardWeight,
     nativeInputValues.allianceRewardWeight,
   ]);
+  if (isNaN(rewardPoolPercentage)) {
+    moreInputRequiredFields.push("rewardPoolPercentage");
+  }
 
   // take rate
   const takeRate = useMemo(() => {
@@ -109,6 +131,9 @@ function AllianceAssetColumn({
       )
     );
   }, [inputValues.annualizedTakeRate, takeRateInterval]);
+  if (isNaN(takeRate)) {
+    moreInputRequiredFields.push("takeRate");
+  }
 
   // reward pool makeup
   const rewardPoolMakeup = useMemo(() => {
@@ -116,55 +141,76 @@ function AllianceAssetColumn({
       inputValues.assetStakedInAlliance * (inputValues.annualizedTakeRate / 100)
     );
   }, [inputValues.annualizedTakeRate, inputValues.assetStakedInAlliance]);
+  if (isNaN(rewardPoolMakeup)) {
+    moreInputRequiredFields.push("rewardPoolMakeup");
+  }
 
   // value of denom in reward pool excluding LSD
   const valueOfDenomInRewardPoolExcludingLSD = useMemo(() => {
     return rewardPoolMakeup * inputValues.assetPrice;
   }, [inputValues.assetPrice, rewardPoolMakeup]);
+  if (isNaN(valueOfDenomInRewardPoolExcludingLSD)) {
+    moreInputRequiredFields.push("valueOfDenomInRewardPoolExcludingLSD");
+  }
 
   // value of denom in reward pool including LSD
   const valueOfDenomInRewardPoolIncludingLSD = useMemo(() => {
     return (
       valueOfDenomInRewardPoolExcludingLSD +
-      rewardPoolMakeup * (inputValues.lsdApr / 100) * inputValues.assetPrice
+      rewardPoolMakeup * (inputValues.lsdAnnualEstimate / 100) * inputValues.assetPrice
     );
   }, [
     inputValues.assetPrice,
-    inputValues.lsdApr,
+    inputValues.lsdAnnualEstimate,
     rewardPoolMakeup,
     valueOfDenomInRewardPoolExcludingLSD,
   ]);
+  if (isNaN(valueOfDenomInRewardPoolIncludingLSD)) {
+    moreInputRequiredFields.push("valueOfDenomInRewardPoolIncludingLSD");
+  }
 
   // % makeup of reward pool value
   const percentageMakeupOfRewardPoolValue = useMemo(() => {
     return valueOfDenomInRewardPoolIncludingLSD / poolTotalValue;
   }, [poolTotalValue, valueOfDenomInRewardPoolIncludingLSD]);
+  if (isNaN(percentageMakeupOfRewardPoolValue)) {
+    moreInputRequiredFields.push("percentageMakeupOfRewardPoolValue");
+  }
 
   // principal stake excluding rewards
   const principalStakeExcludingRewards = useMemo(() => {
     return inputValues.assetStakedInAlliance - rewardPoolMakeup;
   }, [inputValues.assetStakedInAlliance, rewardPoolMakeup]);
+  if (isNaN(principalStakeExcludingRewards)) {
+    moreInputRequiredFields.push("principalStakeExcludingRewards");
+  }
 
   // principal stake including LSD
   const principalStakeIncludingLSD = useMemo(() => {
     return (
       principalStakeExcludingRewards *
       inputValues.assetPrice *
-      (1 + inputValues.lsdApr / 100)
+      (1 + inputValues.lsdAnnualEstimate / 100)
     );
   }, [
     inputValues.assetPrice,
-    inputValues.lsdApr,
+    inputValues.lsdAnnualEstimate,
     principalStakeExcludingRewards,
   ]);
+  if (isNaN(principalStakeIncludingLSD)) {
+    moreInputRequiredFields.push("principalStakeIncludingLSD");
+  }
 
   // staking reward value
   const stakingRewardValue = useMemo(() => {
     return poolTotalValue * rewardPoolPercentage;
   }, [poolTotalValue, rewardPoolPercentage]);
+  if (isNaN(stakingRewardValue)) {
+    moreInputRequiredFields.push("stakingRewardValue");
+  }
 
-  // staking APR
-  const stakingAPR = useMemo(() => {
+  // staking lsdAnnualEstimate
+  const stakingEstimatedPercentage = useMemo(() => {
     return (
       (principalStakeIncludingLSD +
         stakingRewardValue -
@@ -177,6 +223,9 @@ function AllianceAssetColumn({
     principalStakeIncludingLSD,
     stakingRewardValue,
   ]);
+  if (isNaN(stakingEstimatedPercentage)) {
+    moreInputRequiredFields.push("stakingEstimatedPercentage");
+  }
 
   // create map to lookup derived values later
   const derivedValues: AllianceCalculatedValues = {
@@ -190,7 +239,7 @@ function AllianceAssetColumn({
     principalStakeExcludingRewards,
     principalStakeIncludingLSD,
     stakingRewardValue,
-    stakingAPR,
+    stakingEstimatedPercentage,
   };
 
   function handleRemoveAsset() {
@@ -282,6 +331,7 @@ function AllianceAssetColumn({
               section={section}
               userInputValues={userInputValues}
               derivedValues={derivedValues}
+              moreInputRequiredFields={moreInputRequiredFields}
             />
           );
         })}

@@ -1,6 +1,5 @@
 import { type ReactNode, useMemo, useEffect } from "react"
 import { createContext, useLocalStorage } from "utils"
-import { MOCK_DATA, USE_MOCK_DATA } from "../constants"
 import {
   type NativeInputValues,
   type AllianceInputValues,
@@ -17,11 +16,11 @@ type AllianceAssets = Record<
 >
 
 export interface IAppState {
-  allianceAssets: AllianceAssets
-  addAllianceAsset: (asset: string) => void
-  removeAllianceAsset: (index: number) => void
-  poolTotalValue: number
-  nativeInputValues: NativeInputValues
+  allianceAssets: AllianceAssets;
+  addAllianceAsset: (asset: string) => void;
+  removeAllianceAsset: (index: number) => void;
+  poolTotalValue: number;
+  nativeInputValues: NativeInputValues;
   handleNativeInputChange: (
     fieldName: keyof NativeInputValues,
     value: string | number
@@ -30,10 +29,10 @@ export interface IAppState {
     fieldId: number,
     fieldName: keyof AllianceInputValues,
     value: string | number
-  ) => void
-  setAllianceAssets: (newAssets: AllianceAssets) => void
-  setNativeInputValues: (newValues: NativeInputValues) => void
-  shareLink: string
+  ) => void;
+  setAllianceAssets: (newAssets: AllianceAssets) => void;
+  setNativeInputValues: (newValues: NativeInputValues) => void;
+  shareLink: string;
 }
 
 export const [useAppState, AppStateProvider] =
@@ -44,18 +43,19 @@ export function InitAppState({ children }: { children: ReactNode }) {
   const [nativeInputValues, setNativeInputValues] =
     useLocalStorage<NativeInputValues>("nativeAsset", {
       columnName: "Native",
-      inflationRate: 7,
-      lsdApr: 0,
-      assetStakedInAlliance: 527724946,
-      totalTokenSupply: 1073271122,
-      assetPrice: 1.3,
-      allianceRewardWeight: 1,
+      inflationRate: NaN, // Chain Data - Annual Inflation Rate
+      lsdAnnualEstimate: NaN, // Chain Data - Annual Estimated LSD Growth Rate
+      totalTokenSupply: NaN, // Chain Data - Total Token Supply
+      assetPrice: NaN, // Chain Data - Asset Price
+      allianceRewardWeight: NaN, // Alliance Asset Parameters - Alliance Reward Weight
+      assetStakedInAlliance: NaN, // Reward Pool - Asset Staked in Alliance
       denom: "LUNA",
-    })
+    });
+
   const [allianceAssets, setAllianceAssets] = useLocalStorage<AllianceAssets>(
     "allianceAssets",
-    USE_MOCK_DATA ? { ...MOCK_DATA } : {}
-  )
+    {}
+  );
 
   const shareLink = useMemo(() => {
     return (
@@ -64,6 +64,7 @@ export function InitAppState({ children }: { children: ReactNode }) {
       encodeBase64(JSON.stringify({ allianceAssets, nativeInputValues }))
     )
   }, [allianceAssets, nativeInputValues])
+
 
   const poolTotalValue = useMemo(() => {
     let allianceAssetValue = 0
@@ -77,8 +78,8 @@ export function InitAppState({ children }: { children: ReactNode }) {
             inputValues.assetPrice +
           inputValues.assetStakedInAlliance *
             (inputValues.annualizedTakeRate / 100) *
-            (inputValues.lsdApr / 100) *
-            inputValues.assetPrice
+            (inputValues.lsdAnnualEstimate / 100) *
+            inputValues.assetPrice;
       }
     )
 
@@ -89,7 +90,7 @@ export function InitAppState({ children }: { children: ReactNode }) {
       nativeInputValues.totalTokenSupply *
         (nativeInputValues.inflationRate / 100) *
         0 *
-        nativeInputValues.assetPrice
+        nativeInputValues.assetPrice;
 
     return allianceAssetValue + nativeAssetValue
   }, [
@@ -153,12 +154,12 @@ export function InitAppState({ children }: { children: ReactNode }) {
 
   function addAllianceAsset(asset: string) {
     const newAsset: AllianceInputValues = {
-      lsdApr: 0,
-      assetPrice: 0,
-      allianceRewardWeight: 0,
-      annualizedTakeRate: 0,
-      assetStakedInAlliance: 0,
-    }
+      lsdAnnualEstimate: NaN,
+      assetPrice: NaN,
+      allianceRewardWeight: NaN,
+      annualizedTakeRate: NaN,
+      assetStakedInAlliance: NaN,
+    };
 
     setAllianceAssets((cur) => {
       const newId = Date.now().valueOf()
@@ -180,7 +181,6 @@ export function InitAppState({ children }: { children: ReactNode }) {
   }
 
   // render
-
   return (
     <AppStateProvider
       value={{
@@ -192,8 +192,8 @@ export function InitAppState({ children }: { children: ReactNode }) {
         handleNativeInputChange,
         handleAllianceInputChange,
         setAllianceAssets,
-        setNativeInputValues,
         shareLink,
+        setNativeInputValues,
       }}
     >
       {children}

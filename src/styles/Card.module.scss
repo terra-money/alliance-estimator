@@ -103,6 +103,11 @@
         font-size: 18px;
         font-weight: 600;
         width: inherit;
+
+        span {
+          color: rgb(210, 40, 102);
+          opacity: 0.65;
+        }
       }
     }
   }
