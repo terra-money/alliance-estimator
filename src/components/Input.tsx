@@ -1,5 +1,4 @@
 import { useForm, SubmitHandler } from "react-hook-form";
-import { useLocation } from "react-router-dom";
 import { NativeField, AllianceField } from "data";
 import inputStyles from "../styles/Input.module.scss";
 
@@ -12,9 +11,6 @@ function Input({
   value: number | string;
   onChange: React.ChangeEventHandler<HTMLInputElement>;
 }) {
-  const location = useLocation();
-  const isExample = location.pathname === "/mock-data";
-
   const {
     register,
     handleSubmit,
