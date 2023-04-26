@@ -13,10 +13,10 @@ import { ActionButtons } from "components";
 
 function NativeAssetColumn({
   userInputValues,
-  setDemoNativeInputValues,
+  setNativeInputValues,
 }: {
   userInputValues: NativeInputValues;
-  setDemoNativeInputValues: (values: NativeInputValues) => void;
+  setNativeInputValues: (values: NativeInputValues) => void;
 }) {
   const location = useLocation();
   const isExample = location.pathname === "/mock-data";
@@ -92,7 +92,7 @@ function NativeAssetColumn({
       (userInputValues.inflationRate / 100) * userInputValues.totalTokenSupply,
     [userInputValues.inflationRate, userInputValues.totalTokenSupply]
   );
-  if (isNaN(rewardPoolOnNativeChain)) {
+  if (isNaN(rewardPoolOnNativeChain) || !rewardPoolOnNativeChain) {
     moreInputRequiredFields.push("rewardPoolOnNativeChain");
   }
 
@@ -107,7 +107,7 @@ function NativeAssetColumn({
 
     return +nativeWeight / (+allianceTotalWeight + +nativeWeight);
   }, [allianceAssets, userInputValues.allianceRewardWeight]);
-  if (isNaN(rewardPoolPercentage)) {
+  if (isNaN(rewardPoolPercentage) || !rewardPoolPercentage) {
     moreInputRequiredFields.push("rewardPoolPercentage");
   }
 
@@ -116,7 +116,7 @@ function NativeAssetColumn({
       userInputValues.totalTokenSupply * (userInputValues.inflationRate / 100),
     [userInputValues.totalTokenSupply, userInputValues.inflationRate]
   );
-  if (isNaN(rewardPoolMakeup)) {
+  if (isNaN(rewardPoolMakeup) || !rewardPoolMakeup) {
     moreInputRequiredFields.push("rewardPoolMakeup");
   }
 
@@ -124,7 +124,7 @@ function NativeAssetColumn({
     () => rewardPoolMakeup * userInputValues.assetPrice,
     [rewardPoolMakeup, userInputValues.assetPrice]
   );
-  if (isNaN(valueOfDenomInRewardPoolExcludingLSD)) {
+  if (isNaN(valueOfDenomInRewardPoolExcludingLSD) || !valueOfDenomInRewardPoolExcludingLSD) {
     moreInputRequiredFields.push("valueOfDenomInRewardPoolExcludingLSD");
   }
 
@@ -139,7 +139,7 @@ function NativeAssetColumn({
       userInputValues.lsdAnnualEstimate,
     ]
   );
-  if (isNaN(valueOfDenomInRewardPoolIncludingLSD)) {
+  if (isNaN(valueOfDenomInRewardPoolIncludingLSD) || !valueOfDenomInRewardPoolIncludingLSD) {
     moreInputRequiredFields.push("valueOfDenomInRewardPoolIncludingLSD");
   }
 
@@ -147,7 +147,7 @@ function NativeAssetColumn({
     () => valueOfDenomInRewardPoolIncludingLSD / poolTotalValue,
     [poolTotalValue, valueOfDenomInRewardPoolIncludingLSD]
   );
-  if (isNaN(percentageMakeupOfRewardPoolValue)) {
+  if (isNaN(percentageMakeupOfRewardPoolValue) || !percentageMakeupOfRewardPoolValue) {
     moreInputRequiredFields.push("percentageMakeupOfRewardPoolValue");
   }
 
@@ -155,7 +155,7 @@ function NativeAssetColumn({
     () => userInputValues.assetStakedInAlliance,
     [userInputValues.assetStakedInAlliance]
   );
-  if (isNaN(principalStakeExcludingRewards)) {
+  if (isNaN(principalStakeExcludingRewards) || !principalStakeExcludingRewards) {
     moreInputRequiredFields.push("principalStakeExcludingRewards");
   }
 
@@ -163,7 +163,7 @@ function NativeAssetColumn({
     () => principalStakeExcludingRewards * userInputValues.assetPrice,
     [principalStakeExcludingRewards, userInputValues.assetPrice]
   );
-  if (isNaN(principalStakeIncludingLSD)) {
+  if (isNaN(principalStakeIncludingLSD) || !principalStakeIncludingLSD) {
     moreInputRequiredFields.push("principalStakeIncludingLSD");
   }
 
@@ -171,7 +171,7 @@ function NativeAssetColumn({
     () => rewardPoolPercentage * poolTotalValue,
     [poolTotalValue, rewardPoolPercentage]
   );
-  if (isNaN(stakingRewardValue)) {
+  if (isNaN(stakingRewardValue) || !stakingRewardValue) {
     moreInputRequiredFields.push("stakingRewardValue");
   }
 
@@ -188,7 +188,7 @@ function NativeAssetColumn({
       userInputValues.assetPrice,
     ]
   );
-  if (isNaN(stakingEstimatedPercentage)) {
+  if (isNaN(stakingEstimatedPercentage) || !stakingEstimatedPercentage) {
     moreInputRequiredFields.push("stakingEstimatedPercentage");
   }
 
@@ -213,7 +213,7 @@ function NativeAssetColumn({
 
   function handleInputSubmit() {
     setEditName(false)
-    setDemoNativeInputValues({
+    setNativeInputValues({
       ...userInputValues,
       columnName: assetName,
     })

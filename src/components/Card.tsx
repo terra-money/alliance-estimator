@@ -14,6 +14,8 @@ import {
 import { useAppState } from "contexts";
 import cardStyles from "../styles/Card.module.scss";
 import { Input } from "components";
+import { useLocation } from 'react-router-dom';
+import { useExampleAppState } from 'contexts/ExampleAppStateProvider';
 
 const Card = ({
   section,
@@ -36,7 +38,26 @@ const Card = ({
   expanded: boolean;
   moreInputRequiredFields?: string[];
 }) => {
-  const { handleNativeInputChange, handleAllianceInputChange } = useAppState();
+  const location = useLocation();
+  const isExample = location.pathname === "/mock-data";
+  const {
+    handleNativeInputChange: standardHandleNativeInputChange,
+    handleAllianceInputChange: standardHandleAllianceInputChange,
+  } = useAppState();
+
+  const {
+    handleNativeInputChange: exampleHandleNativeInputChange,
+    handleAllianceInputChange: exampleHandleAllianceInputChange,
+  } = useExampleAppState();
+
+  const handleNativeInputChange = isExample
+    ? exampleHandleNativeInputChange
+    : standardHandleNativeInputChange;
+
+  const handleAllianceInputChange = isExample
+    ? exampleHandleAllianceInputChange
+    : standardHandleAllianceInputChange;
+
   const fields = type === "native" ? nativeFieldMap : allianceFieldMap;
 
   function formatValue(
@@ -47,7 +68,7 @@ const Card = ({
       if (isNaN(+value)) return "--";
       return field.format(+value);
     }
-    return value.toLocaleString();
+    return value?.toLocaleString();
   }
 
   function handleHeaderClick() {

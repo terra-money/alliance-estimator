@@ -9,7 +9,13 @@ const ExampleEstimator = ({
 }: {
   estimatorRef: any;
 }) => {
-  const { allianceAssets, addAllianceAsset, demoNativeInputValues, setDemoNativeInputValues, setAllianceAssets } = useExampleAppState();
+  const {
+    allianceAssets,
+    addAllianceAsset,
+    exampleNativeInputValues,
+    setExampleNativeInputValues,
+    setAllianceAssets
+  } = useExampleAppState();
   const endOfPageRef = useRef<HTMLDivElement | null>(null);
 
   function handleScroll() {
@@ -34,8 +40,8 @@ const ExampleEstimator = ({
     <section ref={estimatorRef} className={styles.columnContainer}>
       <div className={styles.assetColumn_native}>
         <NativeAssetColumn
-          userInputValues={demoNativeInputValues}
-          setDemoNativeInputValues={setDemoNativeInputValues}
+          userInputValues={exampleNativeInputValues}
+          setNativeInputValues={setExampleNativeInputValues}
         />
       </div>
       {Object.keys(allianceAssets).map((assetId) => {

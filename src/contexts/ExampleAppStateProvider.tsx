@@ -20,7 +20,7 @@ export interface IAppState {
   addAllianceAsset: (asset: string) => void;
   removeAllianceAsset: (index: number) => void;
   poolTotalValue: number;
-  demoNativeInputValues: NativeInputValues;
+  exampleNativeInputValues: NativeInputValues;
   handleNativeInputChange: (
     fieldName: keyof NativeInputValues,
     value: string | number
@@ -31,7 +31,7 @@ export interface IAppState {
     value: string | number
   ) => void;
   setAllianceAssets: (newAssets: AllianceAssets) => void;
-  setDemoNativeInputValues: (newValues: NativeInputValues) => void;
+  setExampleNativeInputValues: (newValues: NativeInputValues) => void;
 }
 
 export const [useExampleAppState, ExampleAppStateProvider] =
@@ -39,7 +39,7 @@ export const [useExampleAppState, ExampleAppStateProvider] =
 
 export function ExampleAppState({ children }: { children: ReactNode }) {
   // state
-  const [demoNativeInputValues, setDemoNativeInputValues] = useState<NativeInputValues>(
+  const [exampleNativeInputValues, setExampleNativeInputValues] = useState<NativeInputValues>(
     {
       columnName: "Native",
       inflationRate: 7, // Chain Data - Annual Inflation Rate
@@ -71,20 +71,20 @@ export function ExampleAppState({ children }: { children: ReactNode }) {
     );
 
     nativeAssetValue =
-      demoNativeInputValues.totalTokenSupply *
-        (demoNativeInputValues.inflationRate / 100) *
-        demoNativeInputValues.assetPrice +
-      demoNativeInputValues.totalTokenSupply *
-        (demoNativeInputValues.inflationRate / 100) *
+      exampleNativeInputValues.totalTokenSupply *
+        (exampleNativeInputValues.inflationRate / 100) *
+        exampleNativeInputValues.assetPrice +
+      exampleNativeInputValues.totalTokenSupply *
+        (exampleNativeInputValues.inflationRate / 100) *
         0 *
-        demoNativeInputValues.assetPrice;
+        exampleNativeInputValues.assetPrice;
 
     return allianceAssetValue + nativeAssetValue;
   }, [
     allianceAssets,
-    demoNativeInputValues.assetPrice,
-    demoNativeInputValues.inflationRate,
-    demoNativeInputValues.totalTokenSupply,
+    exampleNativeInputValues.assetPrice,
+    exampleNativeInputValues.inflationRate,
+    exampleNativeInputValues.totalTokenSupply,
   ]);
 
   // handlers
@@ -93,9 +93,9 @@ export function ExampleAppState({ children }: { children: ReactNode }) {
     fieldName: keyof NativeInputValues,
     value: string | number
   ) => {
-    if (isInputField(fieldName, demoNativeInputValues)) {
-      setDemoNativeInputValues({
-        ...demoNativeInputValues,
+    if (isInputField(fieldName, exampleNativeInputValues)) {
+      setExampleNativeInputValues({
+        ...exampleNativeInputValues,
         [fieldName]: value,
       });
     }
@@ -157,11 +157,11 @@ export function ExampleAppState({ children }: { children: ReactNode }) {
         addAllianceAsset,
         removeAllianceAsset,
         poolTotalValue,
-        demoNativeInputValues,
+        exampleNativeInputValues,
         handleNativeInputChange,
         handleAllianceInputChange,
         setAllianceAssets,
-        setDemoNativeInputValues,
+        setExampleNativeInputValues,
       }}
     >
       {children}

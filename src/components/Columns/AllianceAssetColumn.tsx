@@ -29,20 +29,20 @@ function AllianceAssetColumn({
   const {
     removeAllianceAsset: standardRemoveAllianceAsset,
     allianceAssets: standardAllianceAssets,
-    demoNativeInputValues: standardNativeInputValues,
+    nativeInputValues: standardNativeInputValues,
     poolTotalValue: standardPoolTotalValue,
   } = useAppState();
 
   const {
     removeAllianceAsset: exampleRemoveAllianceAsset,
     allianceAssets: exampleAllianceAssets,
-    demoNativeInputValues: exampleDemoNativeInputValues,
+    exampleNativeInputValues: exampleDemoNativeInputValues,
     poolTotalValue: examplePoolTotalValue,
   } = useExampleAppState();
 
   const removeAllianceAsset = isExample ? exampleRemoveAllianceAsset : standardRemoveAllianceAsset;
   const allianceAssets = isExample ? exampleAllianceAssets : standardAllianceAssets;
-  const demoNativeInputValues = isExample ? exampleDemoNativeInputValues : standardNativeInputValues;
+  const nativeInputValues = isExample ? exampleDemoNativeInputValues : standardNativeInputValues;
   const poolTotalValue = isExample ? examplePoolTotalValue : standardPoolTotalValue;
 
   const inputValues = allianceAssets[id].inputValues;
@@ -109,13 +109,13 @@ function AllianceAssetColumn({
     Object.values(allianceAssets).forEach((asset) => {
       sum += +asset.inputValues.allianceRewardWeight;
     });
-    sum += +demoNativeInputValues.allianceRewardWeight;
+    sum += +nativeInputValues.allianceRewardWeight;
 
     return +thisSum / +sum;
   }, [
     allianceAssets,
     inputValues.allianceRewardWeight,
-    demoNativeInputValues.allianceRewardWeight,
+    nativeInputValues.allianceRewardWeight,
   ]);
   if (isNaN(rewardPoolPercentage)) {
     moreInputRequiredFields.push("rewardPoolPercentage");
