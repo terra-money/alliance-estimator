@@ -1,4 +1,5 @@
 import { useLocation } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import styles from "styles/Navigation.module.scss";
 
 const Navigation = ({ handleModalOpen }: { handleModalOpen: () => void }) => {
@@ -25,7 +26,15 @@ const Navigation = ({ handleModalOpen }: { handleModalOpen: () => void }) => {
   );
 
   return (
-    <nav className={styles.navigation}>
+    <motion.nav
+      className={styles.navigation}
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{
+        duration: 0.5,
+        delay: 0.01,
+      }}
+    >
       <div className={styles.left_container}>
         <a
           className={styles.logo_container}
@@ -119,7 +128,7 @@ const Navigation = ({ handleModalOpen }: { handleModalOpen: () => void }) => {
           />
         </a>
       </div>
-    </nav>
+    </motion.nav>
   )
 }
 
