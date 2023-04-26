@@ -78,5 +78,10 @@
     background-color: var(--card-bg);
     border: 1px solid var(--border-color);
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      transform: scale(1.05);
+    }
   }
 }
