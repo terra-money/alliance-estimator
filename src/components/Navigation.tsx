@@ -110,7 +110,7 @@ const Navigation = ({ handleModalOpen }: { handleModalOpen: () => void }) => {
         </a>
         <a
           className={styles.terra_link}
-          href='https://alliance.terra.money/'
+          href='https://docs.alliance.terra.money/'
           target="_blank"
           rel="noopener noreferrer"
         >
