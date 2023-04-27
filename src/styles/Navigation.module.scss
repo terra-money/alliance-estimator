@@ -2,8 +2,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: fixed;
-  top: 0;
   width: 100%;
   padding: 10px 20px;
   color: #fff;
@@ -14,15 +12,24 @@
     display: flex;
     align-items: center;
     gap: 26px;
-  }
 
-  .arrow {
-    animation: .75s infinite a;
-  }
-
-  @keyframes a {
-    50% {
-      transform: translateX(2px)
+    button {
+      background-color: transparent;
+      border: none;
+      height: 34px;
+      cursor: pointer;
+      margin-top: 2px;
+      margin-left: 15px;
+      transition: all 0.2s ease-in-out;
+      border: 1px solid var(--accent-color);
+      border-radius: 8px;
+      padding: 6px;
+      background: hsla(245, 97%, 62%, 15%);
+      &:hover {
+        transform: scale(1.1);
+        background: hsla(245, 97%, 62%, 25%);
+        border: 1px solid var(--accent-color);
+      }
     }
   }
 
@@ -42,55 +49,67 @@
     }
   }
 
-  .terra_link {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: color 0.2s;
-    width: 22px;
-    height: 22px;
-    padding-left: 2px;
-    overflow: hidden;
-    border: 1px solid var(--accent-color);
-    border-color: transparent;
-    border-radius: 25px;
-    background: transparent;
-    transition:
-      width .5s ease-out,
-      padding-left .05s ease-out;
-
-    &.hovered {
-      overflow: auto;
-      width: 155px;
-      border-radius: 16px;
-      height: 32px;
-      padding-left: 10px;
-      cursor: pointer;
-
-      &.estimator {
-        width: 135px;
-      }
-
-      &.documentation {
-        width: 175px;
-      }
-    }
-
-    span {
-      font-size: 14px;
-    }
-
-    &:hover {
-      color: #888;
-    }
-  }
-
   .button_container {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 8px;
+
+    .mockDataLink {
+      height: 34px;
+      margin: 0 1.5rem;
+      width: fit-content;
+      min-width: 125px;
+      display: flex;
+      align-items: center;
+      background: var(--accent-color);
+      border-radius: 8px;
+      border: none;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 0.65rem 1.25rem;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+      gap: 4px;
+      &:hover {
+        background: var(--accent-color-darkened);
+        transform: scale(1.05);
+      }
+    }
+
+    .terra_link {
+      height: 30px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0.5rem 1rem;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      border: 1px solid #c1c1c1;
+      border-radius: 25px;
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+
+      img {
+        height: 14px;
+      }
+
+      &:hover {
+        background: hsla(245, 97%, 62%, 25%);
+        border: 1px solid var(--accent-color);
+        transform: scale(1.05);
+
+        .arrow{
+          animation: .75s infinite a;
+        }
+      }
+    }
+
+    @keyframes a {
+      50% {
+        transform: translateX(2px)
+      }
+    }
   }
 }
-

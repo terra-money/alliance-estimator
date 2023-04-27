@@ -1,0 +1,57 @@
+.copy_modal {
+  display: flex;
+  flex-direction: column;
+  gap: 42px;
+  line-height: 150%;
+
+  h2 {
+    font-size: 28px;
+    font-weight: 600;
+  }
+
+  .middle_section {
+    display: flex;
+    gap: 12px;
+    flex-direction: column;
+  }
+
+  .text {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    p {
+      font-family: 'Poppins';
+      font-weight: 600;
+      color: var(--font-color-muted)
+    }
+  }
+
+  .info {
+    display: flex;
+    gap: 4px;
+    color: hsl(0, 83%, 60%);
+    background-color: hsla(0, 83%, 60%, 10%);
+    border-color: #ebccd1;
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 10px;
+    font-weight: 700;
+    font-size: 12px;
+
+    svg {
+      width: 32px;
+    }
+
+    .text {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      p {
+        color:hsl(0, 83%, 60%);
+        line-height: 150%;
+      }
+    }
+  }
+}

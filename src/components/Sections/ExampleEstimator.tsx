@@ -1,29 +1,29 @@
-import { useRef } from "react"
-import { useAppState } from "contexts"
-import { NativeAssetColumn, AllianceAssetColumn } from "components"
-import add_button from "styles/icons/add_button.svg"
-import styles from "styles/Estimator.module.scss"
+import { useRef } from "react";
+import { useExampleAppState } from "../../contexts/ExampleAppStateProvider";
+import { NativeAssetColumn, AllianceAssetColumn } from "components";
+import add_button from "styles/icons/add_button.svg";
+import styles from "styles/Estimator.module.scss";
 
-const Estimator = ({
+const ExampleEstimator = ({
   estimatorRef,
 }: {
-  estimatorRef: any
+  estimatorRef: any;
 }) => {
   const {
     allianceAssets,
     addAllianceAsset,
-    nativeInputValues,
-    setNativeInputValues,
+    exampleNativeInputValues,
+    setExampleNativeInputValues,
     setAllianceAssets
-  } = useAppState();
+  } = useExampleAppState();
   const endOfPageRef = useRef<HTMLDivElement | null>(null);
 
   function handleScroll() {
     setTimeout(() => {
       endOfPageRef.current?.scrollIntoView({
         behavior: "smooth",
-      })
-    }, 100)
+      });
+    }, 100);
   }
 
   const changeColumnTitle = (id: any, name: any) => {
@@ -40,13 +40,16 @@ const Estimator = ({
     <section ref={estimatorRef} className={styles.columnContainer}>
       <div className={styles.assetColumn_native}>
         <NativeAssetColumn
-          userInputValues={nativeInputValues}
-          setNativeInputValues={setNativeInputValues}
+          userInputValues={exampleNativeInputValues}
+          setNativeInputValues={setExampleNativeInputValues}
         />
       </div>
       {Object.keys(allianceAssets).map((assetId) => {
         return (
-          <div key={`alliance-asset-${assetId}`} className={styles.assetColumn}>
+          <div
+            key={`alliance-asset-${assetId}`}
+            className={styles.assetColumn}
+          >
             <AllianceAssetColumn
               id={+assetId}
               label={allianceAssets[+assetId].name}
@@ -54,7 +57,7 @@ const Estimator = ({
               changeColumnTitle={changeColumnTitle}
             />
           </div>
-        )
+        );
       })}
       <div ref={endOfPageRef} className={styles.lastColumn}>
         <div  className={styles.addColumn}>
@@ -70,6 +73,6 @@ const Estimator = ({
       </div>
     </section>
   )
-}
+};
 
-export default Estimator
+export default ExampleEstimator;

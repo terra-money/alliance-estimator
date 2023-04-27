@@ -4,7 +4,7 @@ export interface NativeInputValues {
   columnName: string;
   denom: string;
   inflationRate: number;
-  lsdApr: number;
+  lsdAnnualEstimate: number;
   totalTokenSupply: number;
   assetPrice: number;
   allianceRewardWeight: number;
@@ -22,7 +22,7 @@ export interface NativeCalculatedValues {
   principalStakeExcludingRewards: number;
   principalStakeIncludingLSD: number;
   stakingRewardValue: number;
-  stakingAPR: number;
+  stakingEstimatedPercentage: number;
 }
 
 export type NativeFieldKey =
@@ -55,7 +55,7 @@ export const nativeFields: NativeField[] = [
   },
   {
     group: "Chain Data",
-    name: "lsdApr",
+    name: "lsdAnnualEstimate",
     label: "Annual Estimated LSD Growth Rate",
     secondaryLabel: "Set to 0 if not an LSD",
     input: true,
@@ -70,7 +70,7 @@ export const nativeFields: NativeField[] = [
   {
     group: "Chain Data",
     name: "rewardPoolOnNativeChain",
-    label: "Reward Pool on Native Chain",
+    label: "Reward Pool on Chain",
     input: false,
   },
   {
@@ -96,7 +96,7 @@ export const nativeFields: NativeField[] = [
   {
     group: "Reward Pool",
     name: "assetStakedInAlliance",
-    label: "Asset Staked in Alliance",
+    label: "Asset Amount Staked in Alliance",
     input: true,
   },
   {
@@ -134,17 +134,10 @@ export const nativeFields: NativeField[] = [
     format: (value) => (value * 100).toFixed(4) + " %",
   },
   {
-    group: "Pool Total Value",
-    name: "poolTotalValue",
-    label: "(including LSD appreciation)",
-    input: false,
-    format: (value) => currencyFormat(value),
-  },
-  {
     group: "Principal",
     name: "principalStakeExcludingRewards",
     label: "Principal stake amount after 1 year take rate",
-    secondaryLabel: "Excluding Rewards",
+    secondaryLabel: "Excluding rewards",
     input: false,
     advanced: true,
   },
@@ -167,11 +160,18 @@ export const nativeFields: NativeField[] = [
   },
   {
     group: "Yield",
-    name: "stakingAPR",
+    name: "stakingEstimatedPercentage",
     label: "Estimated percentage change over 1 year",
     secondaryLabel: "Including LSD appreciation and take rate",
     input: false,
     format: (value) => (value * 100).toFixed(4) + " %",
+  },
+  {
+    group: "Pool Total Value",
+    name: "poolTotalValue",
+    label: "(including LSD appreciation)",
+    input: false,
+    format: (value) => currencyFormat(value),
   },
 ];
 

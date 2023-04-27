@@ -1,7 +1,7 @@
 import { currencyFormat } from "./helpers";
 
 export interface AllianceInputValues {
-  lsdApr: number;
+  lsdAnnualEstimate: number;
   assetPrice: number;
   allianceRewardWeight: number;
   annualizedTakeRate: number;
@@ -17,7 +17,7 @@ export interface AllianceCalculatedValues {
   principalStakeExcludingRewards: number;
   principalStakeIncludingLSD: number;
   stakingRewardValue: number;
-  stakingAPR: number;
+  stakingEstimatedPercentage: number;
   takeRateInterval: number;
   takeRate: number;
 }
@@ -43,7 +43,7 @@ export type AllianceFieldMap = Record<string, AllianceField[]>;
 export const allianceFields: AllianceField[] = [
   {
     group: "Chain Data",
-    name: "lsdApr",
+    name: "lsdAnnualEstimate",
     label: "Annual Estimated LSD Growth Rate",
     secondaryLabel: "Set to 0 if not an LSD",
     input: true,
@@ -94,7 +94,7 @@ export const allianceFields: AllianceField[] = [
   {
     group: "Reward Pool",
     name: "assetStakedInAlliance",
-    label: "Asset Staked in Alliance",
+    label: "Asset Amount Staked in Alliance",
     input: true,
   },
   {
@@ -117,7 +117,8 @@ export const allianceFields: AllianceField[] = [
   {
     group: "Reward Pool",
     name: "valueOfDenomInRewardPoolIncludingLSD",
-    label: "Value of denom in reward pool after 1 yr LSD yield",
+    label: "Value of denom in reward pool",
+    secondaryLabel: "After 1 year LSD yield",
     input: false,
     advanced: true,
     format: (value) => currencyFormat(value),
@@ -133,7 +134,7 @@ export const allianceFields: AllianceField[] = [
   {
     group: "Principal",
     name: "principalStakeExcludingRewards",
-    label: "Principal stake amount - 1 year take rate",
+    label: "Principal stake amount after 1 year take rate",
     secondaryLabel: "Excluding rewards",
     input: false,
     advanced: true,
@@ -141,7 +142,7 @@ export const allianceFields: AllianceField[] = [
   {
     group: "Principal",
     name: "principalStakeIncludingLSD",
-    label: "Principal stake value - 1 year take rate",
+    label: "Principal stake value after 1 year take rate",
     secondaryLabel: "Including LSD yield",
     input: false,
     advanced: true,
@@ -150,15 +151,15 @@ export const allianceFields: AllianceField[] = [
   {
     group: "Yield",
     name: "stakingRewardValue",
-    label: "Staking reward value",
+    label: "Estimated staking reward value",
     secondaryLabel: "Including LSD yield",
     input: false,
     format: (value) => currencyFormat(value),
   },
   {
     group: "Yield",
-    name: "stakingAPR",
-    label: "Staking APR",
+    name: "stakingEstimatedPercentage",
+    label: "Estimated percentage change over 1 year",
     secondaryLabel: "Including LSD appreciation and take rate",
     input: false,
     format: (value) => (value * 100).toFixed(4) + " %",
