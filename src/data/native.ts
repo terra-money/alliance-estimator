@@ -46,35 +46,38 @@ export type NativeFieldMap = {
 };
 
 export const nativeFields: NativeField[] = [
+
   {
-    group: "Chain Data",
+    group: "Native Chain Data",
+    name: "totalTokenSupply",
+    label: "Total Supply",
+    input: true,
+  },
+  {
+    group: "Native Chain Data",
     name: "inflationRate",
     label: "Inflation Rate",
     input: true,
     inputSuffix: "%",
   },
   {
-    group: "Chain Data",
-    name: "totalTokenSupply",
-    label: "Total Supply",
-    input: true,
-  },
-  {
-    group: "Chain Data",
+    group: "Native Chain Data",
     name: "rewardPoolOnNativeChain",
     label: "Reward Pool on Chain",
+    secondaryLabel: "Based on inflation",
     input: false,
   },
   {
-    group: "Chain Data",
+    group: "Native Chain Data",
     name: "assetPrice",
-    label: "Asset Price",
+    label: "Native Asset Price",
     input: true,
     inputPrefix: "$",
   },
   {
     group: "Native Asset Parameters",
     label: "Native Reward Weight",
+    secondaryLabel: "Native assets have a weight of 1",
     input: true,
     name: "allianceRewardWeight",
   },
