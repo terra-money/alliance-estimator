@@ -42,12 +42,12 @@ export function InitAppState({ children }: { children: ReactNode }) {
   // state
   const [nativeInputValues, setNativeInputValues] =
     useLocalStorage<NativeInputValues>("nativeAsset", {
-      columnName: "Native",
+      columnName: "Native Asset",
       inflationRate: NaN, // Chain Data - Annual Inflation Rate
       lsdAnnualEstimate: NaN, // Chain Data - Annual Estimated LSD Growth Rate
       totalTokenSupply: NaN, // Chain Data - Total Token Supply
       assetPrice: NaN, // Chain Data - Asset Price
-      allianceRewardWeight: NaN, // Alliance Asset Parameters - Alliance Reward Weight
+      allianceRewardWeight: 1, // Alliance Asset Parameters - Alliance Reward Weight
       assetStakedInAlliance: NaN, // Reward Pool - Asset Staked in Alliance
       denom: "LUNA",
     });
