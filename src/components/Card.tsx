@@ -146,7 +146,7 @@ const Card = ({
                 ) : (
                   <div className={cardStyles.textValue}>
                     {moreInputRequiredFields?.includes(field.name) ? (
-                      <span>Input Required</span>
+                      <span>Fill in all fields</span>
                     ) : (
                       isDerivedField(field.name, derivedValues)
                         ? formatValue(derivedValues[field.name], field)
