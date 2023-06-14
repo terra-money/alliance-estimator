@@ -126,7 +126,7 @@ function AllianceAssetColumn({
     return (
       1 -
       Math.exp(
-        Math.log(inputValues.annualizedTakeRate / 100) /
+        Math.log(1 - inputValues.annualizedTakeRate / 100) /
           (525600 / takeRateInterval)
       )
     );
