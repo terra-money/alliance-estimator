@@ -111,7 +111,7 @@ export const nativeFields: NativeField[] = [
     group: "Reward Pool",
     name: "percentageMakeupOfRewardPoolValue",
     label: "Percentage of reward pool value",
-    secondaryLabel:"Percentage of native asset in reward pool",
+    secondaryLabel:"% of the reward pool value made up of this asset",
     input: false,
     advanced: true,
     format: (value) => (value * 100).toFixed(4) + " %",
