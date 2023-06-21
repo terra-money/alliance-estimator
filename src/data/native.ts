@@ -60,13 +60,7 @@ export const nativeFields: NativeField[] = [
     input: true,
     inputSuffix: "%",
   },
-  {
-    group: "Native Chain Data",
-    name: "rewardPoolOnNativeChain",
-    label: "Reward Pool on Chain",
-    secondaryLabel: "Based on 1 year of inflation",
-    input: false,
-  },
+
   {
     group: "Native Chain Data",
     name: "assetPrice",
@@ -75,14 +69,14 @@ export const nativeFields: NativeField[] = [
     inputPrefix: "$",
   },
   {
-    group: "Native Asset Parameters",
+    group: "Native Staking Parameters",
     label: "Native Reward Weight",
     secondaryLabel: "Native assets have a weight of 1",
     input: true,
     name: "allianceRewardWeight",
   },
   {
-    group: "Native Asset Parameters",
+    group: "Native Staking Parameters",
     label: "Reward Weight Percentage",
     secondaryLabel: "% of reward pool distributed to native stakers",
     input: false,
@@ -90,9 +84,9 @@ export const nativeFields: NativeField[] = [
     format: (value) => (value * 100).toFixed(4) + " %",
   },
   {
-    group: "Reward Pool",
+    group: "Native Staking Parameters",
     name: "assetStakedInAlliance",
-    label: "Total native stake",
+    label: "Total native staked",
     secondaryLabel: "Amount of native asset staked",
     input: true,
   },
