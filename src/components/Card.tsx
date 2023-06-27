@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import {
   nativeFieldMap,
   NativeInputValues,
@@ -39,6 +39,7 @@ const Card = ({
   moreInputRequiredFields?: string[];
 }) => {
   const location = useLocation();
+  const cardContentRef = useRef<HTMLDivElement | null>(null);
   const isExample = location.pathname === "/mock-data";
   const {
     handleNativeInputChange: standardHandleNativeInputChange,
@@ -95,11 +96,26 @@ const Card = ({
   }
 
   useEffect(() => {
-    const content = document.getElementById(`content-${type === 'native' ? "" : assetId}-${index}`);
-    if (content) {
-      content.style.maxHeight = expanded ? `${content.scrollHeight + 24}px` : "0px";
+    if (cardContentRef.current) {
+      cardContentRef.current.style.maxHeight = expanded ? `${cardContentRef.current.scrollHeight + 55}px` : "0px";
     }
-  }, [assetId, expanded, index, type])
+
+  }, [assetId, expanded, index, type, cardContentRef])
+
+  const parseText = (input: string) => {
+    const parts = input.split(/(\[[^\]]*\]\([^)]*\))/g);
+
+    return parts.map((part, index) => {
+      const match = part.match(/\[([^\]]*)\]\(([^)]*)\)/);
+      if (match) {
+        const text = match[1];
+        const url = match[2];
+        return <a key={index} href={url} target="_blank" rel="noopener noreferrer">{text}</a>;
+      } else {
+        return part;
+      }
+    });
+  };
 
   return (
     <div className={cardStyles.fieldSection}>
@@ -122,14 +138,14 @@ const Card = ({
         </div>
         <div
           className={cardStyles.content}
-          id={`content-${type === 'native' ? "" : assetId}-${index}`}
+          ref={cardContentRef}
         >
           {fields[section].map((field, i) => (
             <div className={`${cardStyles.fieldRow}`} key={field.name}>
               <div className={cardStyles.labelContainer}>
                 <div className={cardStyles.fieldLabel}>{field.label}:</div>
                 <div className={cardStyles.secondaryLabel}>
-                  {field.secondaryLabel}
+                  {parseText(field.secondaryLabel || "")}
                 </div>
               </div>
               <div className={cardStyles.fieldValue}>

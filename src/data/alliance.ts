@@ -173,7 +173,7 @@ export const allianceFields: AllianceField[] = [
     group: "Yield",
     name: "stakingEstimatedPercentage",
     label: "Estimated percentage change over 1 year",
-    secondaryLabel: "Reward change including Native assets, Alliance assets, take rate, and [LSD appreciation](https://docs.alliance.terra.money/alliance#liquid-staking-derivatives",
+    secondaryLabel: "Reward change including Native assets, Alliance assets, take rate, and [LSD appreciation](https://docs.alliance.terra.money/alliance#liquid-staking-derivatives)",
     input: false,
     format: (value) => (value * 100).toFixed(4) + " %",
   },

@@ -82,6 +82,17 @@
         font-size: 10px;
         font-weight: 500;
         color: var(--font-color-secondary);
+
+        a {
+          color: #bfbfcb;
+          font-weight: 600;
+          transition: all 0.3s;
+
+          &:hover {
+            text-decoration: underline;
+            color: var(--font-color);
+          }
+        }
       }
     }
 
@@ -121,7 +132,7 @@
       opacity: 1;
       padding-top: 12px;
       padding-bottom: 12px;
-      max-height: 375px;
+      max-height: 450px;
     }
 
     .icon {
