@@ -41,7 +41,7 @@ export function ExampleAppState({ children }: { children: ReactNode }) {
   // state
   const [exampleNativeInputValues, setExampleNativeInputValues] = useState<NativeInputValues>(
     {
-      columnName: "Native",
+      columnName: "Native Asset",
       inflationRate: 7, // Chain Data - Annual Inflation Rate
       lsdAnnualEstimate: 0, // Chain Data - Annual Estimated LSD Growth Rate
       totalTokenSupply: 1073271122, // Chain Data - Total Token Supply

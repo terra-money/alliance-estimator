@@ -60,7 +60,7 @@ const Estimator = ({
         <div  className={styles.addColumn}>
           <button
             onClick={() => {
-              addAllianceAsset("New Asset");
+              addAllianceAsset("Alliance asset");
               handleScroll();
             }}
           >
